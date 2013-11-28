@@ -2,8 +2,9 @@
 	"manifest_version": 2,
 
 	"name": "xPath Analyzer",
+	"short_name": "xPath Analyzer",
 	"description": "Google Chrome extension that allows to evaluate xPath expressions against the XML of the current browser tab.",
-	"version": "0.1",
+	"version": "0.0.9",
 
 	"icons": {
 		"128": "thumb.png"
