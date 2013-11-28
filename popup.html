@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <head>
+    <title>xPath Analyzer</title>
+    <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
+    <style>
+      body { background: #000; height: auto; font-family: 'Muli', sans-serif; font-size: 14px; font-weight: 100; margin: 0; overflow-x: hidden; padding: 3px; width: 360px; }
+      
+      #main { background-color: #FFF; border-radius: 3px; margin: 0 auto; padding: 6px; }
+      
+      h1 { border-bottom: 1px solid #333; font-size: 16px; font-weight: 500; margin: 0 0 15px; padding: 0 0 2px; text-shadow: 0 0 0 #000; }
+      h2 { font-size: 14px; font-weight: 500; margin: 0 0 5px; padding: 0; }
+
+      section label { display: block; }
+
+      #xpath-input input { border: 1px solid #333; font-size: 14px; height: 24px; outline: none; padding: 5px 10px; width: 325px; }
+      #xpath-output { background: #E9E9E9; border: 1px solid #DDD; height: auto; margin: 15px 0 0; padding: 5px; }
+
+      pre { font-size: 12px; margin: 0; padding: 0; text-indent: 0; white-space: pre-line; }
+      pre .last-query { font-weight: 500; }
+      pre .last-query-result { color: #00F; display: block; overflow: hidden; white-space: pre; width: 100%; word-wrap: break-word; }
+
+      #error-alert { background: #F2DEDE; border: 1px solid #B94A48; color: #B94A48; height: auto; margin: 15px 0 0; padding: 5px; }
+      #error-alert h2{ margin: 0; }
+      #error-alert p { line-height: normal; margin: 0; padding: 0; }
+
+      footer { margin: 25px 0 0; }
+      footer ul { list-style: none; margin: 0; padding: 0; }
+      footer ul li { display: inline-block; margin: 0; padding: 0; }
+      footer ul li + li { margin-left: 10px; }
+      footer ul li a { color: #297C3B; text-decoration: none; text-shadow: 0 0 0 #1C5B2A; }
+      footer ul li a:hover { color: #1C5B2A; text-decoration: underline; }
+      .hidden { display: none; }
+    </style>
+  </head>
+  <body>
+    <div id="main">
+      <h1>xPath Analyzer</h1>
+      <section id="xpath-input">
+        <label for="xpath">xPath</label>
+        <input type="text" name="xpath" id="xpath" autocapitalize="off" placeholder="Type the xPath, then press ENTER"/>
+      </section>
+      <section id="xpath-output" class="hidden">
+        <h2>Result for:</h2>
+        <pre id="result-box">
+          <span class="last-query"></span>
+          <span class="last-query-result"></span>
+        </pre>
+      </section>
+      <section id="error-alert" class="hidden">
+        <h2>Error:</h2>
+        <p>Sorry, an error occured.</p>
+        <p class="trace"></p>
+      </section>
+      <footer>
+        <ul>
+          <li><a href="https://twitter.com/brunoscopelliti" target="_blank">@brunoscopelliti</a></li>
+          <li><a href="#" target="_blank">About</a></li>
+          <li><a href="#" target="_blank">Help</a></li>
+        </ul>
+      </footer>
+    </div>
+    <script src="js/min/xpath-analyzer.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1 @@
+var parser=new window.DOMParser;0==chrome.runtime.onMessage.listeners_.length&&chrome.runtime.onMessage.addListener(function(a){var b,c=JSON.parse(a);"xml"==c.type?(b=parser.parseFromString(c.message,"text/xml"),console.info(b.children[0])):"function"==typeof console[c.type]&&console[c.type](c.message)});

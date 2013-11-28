@@ -1,0 +1,18 @@
+{
+	"manifest_version": 2,
+
+	"name": "xPath Analyzer",
+	"description": "Google Chrome extension that allows to evaluate xPath expressions against the XML of the current browser tab.",
+	"version": "0.1",
+
+	"icons": {
+		"128": "thumb.png"
+	},
+
+	"permissions": ["tabs", "<all_urls>"],
+
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_popup": "popup.html"
+	}
+}
