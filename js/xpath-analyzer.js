@@ -65,7 +65,7 @@ xPathAnalyzer = (function() {
 
     // test the xPath
     test: function(xPath) {
-      
+
       var tmp, result = {}, 
         _self = this;
 
@@ -93,13 +93,34 @@ xPathAnalyzer = (function() {
         case 4:
           tmp = _self.lastQuery.split('/');
           if (tmp[tmp.length-1] == 'text()' || tmp[tmp.length-1].indexOf('@') == 0) {
-            // in case xPath (implicitly) match a string (i.e. root/child/text() or /root/@attribute)
-            result = _self.xml.evaluate('string(' + xPath + ')', _self.xml, null, XPathResult.ANY_TYPE, null);
-            DOMManager.showResult(true, result.stringValue);
+            // if xPath (implicitly) expect a string as result (i.e. root/child/text() or /root/@attribute)
+
+            // check if the expression match more than an element
+            result = _self.xml.evaluate('count(' + xPath + ')', _self.xml, null, XPathResult.NUMBER_TYPE, null);
+
+            if (result.numberValue > 1) {
+              // xpath matches many elements
+              if (tmp[tmp.length-1].indexOf('@') == 0) {
+                // xpath matches one (or more) attributes
+                tmp.pop();
+                _self.getAllAttributes(tmp.join('/'));
+              }
+              else {
+                // xpath match the element's text content
+                tmp.pop();
+                _self.getAllTextContent(tmp.join('/'));
+              }
+            }
+            else {
+              // xpath matches one element
+              result = _self.xml.evaluate('string(' + xPath + ')', _self.xml, null, XPathResult.STRING_TYPE, null);
+              DOMManager.showResult(true, result.stringValue);
+            }
+
           }
           else {
-            // in case the xPath match one (or more) XML element(s)
-            _self.getAll();  
+            // if xPath match one (or more) XML element(s)
+            _self.getAllElement();
           }
         break;
       }
@@ -107,7 +128,7 @@ xPathAnalyzer = (function() {
     },
 
     // get all the elements which match the xPath
-    getAll: function() {
+    getAllElement: function() {
 
       var currentNode,
         _self = this,
@@ -121,13 +142,100 @@ xPathAnalyzer = (function() {
 
         if (!currentNode) {
           // no results
-          logger('info', 'Not found.');
+          logger('warn', 'Not found.');
         }
         while (currentNode) {
           // log current result
           logger('xml', serializer.serializeToString(currentNode));
           currentNode = iterator.iterateNext();
         }
+        DOMManager.showResult(false);
+      }
+      catch (e) {
+        DOMManager.handleError(false, e);
+      }
+
+    },
+
+    // get the value of the attribute(s) which match the xPath  
+    getAllAttributes: function(xPath) {
+
+      var currentNode, attr, 
+        tmpObj = {},
+        table = [],
+        _self = this,
+        iterator;
+
+      if (_self.lastQuery.substr(0,3) == '//@') {
+        // recovery consecutive slashes
+        xPath = '/' + xPath + '*';
+      }
+      iterator = _self.xml.evaluate(xPath, _self.xml, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+
+      attr = _self.lastQuery.split('/@');
+      attr = attr[attr.length-1];
+
+      logger('info', 'Result(s) for ' + _self.lastQuery + ': ');
+
+      try {
+        currentNode = iterator.iterateNext();
+
+        while (currentNode) {
+
+          if (attr == '*') {
+            // if xpath matches all the property of the current element
+            tmpObj = {};
+            currentNode = !currentNode.parentNode ? currentNode.children[0] : currentNode;
+            for (var _a in currentNode.attributes){
+              if (currentNode.attributes.hasOwnProperty(_a) && currentNode.hasAttribute(currentNode.attributes[_a].name)) {
+                tmpObj[currentNode.attributes[_a].name] = currentNode.attributes[_a].value;
+              }
+            }
+            table.push(tmpObj);
+          }
+          else {
+            // if xpath match a specific property
+            tmpObj = {};
+            currentNode = !currentNode.parentNode ? currentNode.children[0] : currentNode;
+            if (currentNode.hasAttribute(attr)) {
+              tmpObj[attr] = currentNode.getAttribute(attr);
+              table.push(tmpObj);
+            }
+          }
+
+          currentNode = iterator.iterateNext();
+
+        }
+
+        // show results
+        logger('table', table);
+        DOMManager.showResult(false);
+
+      }
+      catch (e) {
+        DOMManager.handleError(false, e);
+      }
+
+    },
+
+    // get the text content of the elements which match the xPath
+    getAllTextContent: function(xPath) {
+
+      var currentNode,
+        j = 1,
+        _self = this,
+        iterator = _self.xml.evaluate(xPath, _self.xml, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+
+      logger('info', 'Result(s) for ' + _self.lastQuery + ': ');
+
+      try {
+        currentNode = iterator.iterateNext();
+        while (currentNode) {
+          logger('info', j + ' - ' + currentNode.textContent);
+          currentNode = iterator.iterateNext();
+          j++;
+        }
+        // show results
         DOMManager.showResult(false);
       }
       catch (e) {
