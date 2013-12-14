@@ -1,5 +1,6 @@
 screenshots/*
 xpath_banner/*
+node_modules/*
 
 #################
 ## Eclipse

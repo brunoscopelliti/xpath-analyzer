@@ -1,11 +1,11 @@
 /*
 * xPath Analyzer
 *
-* @version 1.0
-* @author Bruno Scopelliti (http://brunoscopelliti.com)
+* @version 1.2
+* @author Bruno Scopelliti ( http://brunoscopelliti.com )
 */
 
-var DOMManager, xPathAnalyzer, keyupFn;
+var CookieManager, DOMManager, xPathAnalyzer, keyupFn;
 
 var logger = function(type, message) {
   // allows to log a message in the main console
@@ -15,6 +15,66 @@ var logger = function(type, message) {
     });
   });
 }
+
+
+CookieManager = (function() {
+  // it exposes method to write/read cookies
+  // it's based on jquery-cookies ( https://github.com/carhartl/jquery-cookie/blob/master/jquery.cookie.js )
+
+  var getValue = function(s) {
+
+    if (s.indexOf('"') === 0) {
+      s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+    }
+
+    try {
+      return JSON.parse(decodeURIComponent(s.replace(/\+/g, ' ')));
+    } 
+    catch(e) { }
+
+  }
+
+  return {
+    
+    // read the value stored in the "key" cookie
+    read: function(key) {
+
+      var parts, name, cookie,
+        result = {},
+        cookies = document.cookie ? document.cookie.split('; ') : [];
+
+      for (var i = 0; i < cookies.length; i++) {
+
+        parts = cookies[i].split('=');
+        name = decodeURIComponent(parts.shift());
+        cookie = parts.join('=');
+
+        if (key && key === name) {
+          result = getValue(cookie);
+          break;
+        }
+
+        // prevent storing a cookie that we couldn't decode.
+        if (!key && (cookie = getValue(cookie)) !== undefined) {
+          result[name] = cookie;
+        }
+
+      }
+
+      return result;
+
+    },
+
+    // write a cookie    
+    write: function(key, value) {
+
+      return (document.cookie = encodeURIComponent(key) + '=' + encodeURIComponent(JSON.stringify(value))  + '; expires=');
+    
+    }
+
+  }
+
+})();
 
 DOMManager = (function() {
   // it exposes methods to show results of the analysis
@@ -57,9 +117,13 @@ DOMManager = (function() {
 xPathAnalyzer = (function() {
   // it exposes methods to execute the xPath analysis
 
+  var _h = CookieManager.read('history');
+
   return {
 
     xml: null,
+
+    history: (_h instanceof Array) ? _h : [],
 
     lastQuery: null,
 
@@ -251,6 +315,12 @@ xPathAnalyzer = (function() {
 // startup operations
 window.onload = function() {
 
+  var historyMemoryLimit = 15,
+    currentHistoryEntry = 0, 
+    direction = 'prev',
+    xpathInput = document.getElementById('xpath');
+
+
   // run an external script to get the content of the current page
   chrome.tabs.executeScript(null, { file: "js/getPageContent.js" }, function() {
     if (chrome.extension.lastError) {
@@ -278,8 +348,68 @@ window.onload = function() {
 
   // register the keyup event listener on the xpath input field
   keyupFn = function(e) {
-    e.which == 13 && xPathAnalyzer.test(this.value);
+    
+    switch (e.which) {
+      
+      case 13:
+        // ENTER key 
+
+        // add the xPath to the history
+        xPathAnalyzer.history.unshift(this.value);
+        if (xPathAnalyzer.history.length > historyMemoryLimit) {
+          xPathAnalyzer.history.length = historyMemoryLimit;
+        }
+        CookieManager.write('history', xPathAnalyzer.history);
+
+        // evaluate the xPath
+        xPathAnalyzer.test(this.value);
+
+        //
+        currentHistoryEntry = 0;
+        direction = 'prev';
+        
+        break;
+      
+      case 38:
+        // ARROW UP key
+        // fill the input with the previous xPath
+
+        if (currentHistoryEntry < xPathAnalyzer.history.length) {
+
+          if (direction == 'next') {
+            currentHistoryEntry++;
+            direction = 'prev';
+          }
+
+          xpathInput.value = xPathAnalyzer.history[currentHistoryEntry];
+          currentHistoryEntry++;
+
+        }
+
+        break;
+
+      case 40:
+        // ARROW DOWN key
+        // fill the input with the next xPath
+
+        if (currentHistoryEntry > 0) {
+
+          if (direction == 'prev') {
+            currentHistoryEntry--;
+            direction = 'next';
+          }
+
+          currentHistoryEntry--;
+          xpathInput.value = xPathAnalyzer.history[currentHistoryEntry];
+
+        }
+
+        break;
+
+    }
+
   };
-  document.getElementById('xpath').addEventListener('keyup', keyupFn, false);
+
+  xpathInput.addEventListener('keyup', keyupFn, false);
 
 }
