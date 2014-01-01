@@ -44,5 +44,5 @@ xPath Analyzer can evaluate each possible type of xPath (or XSLT expression).
 
 
 
-[1]: bit.ly/1bFabzr
+[1]: http://bit.ly/1bFabzr
 [2]: http://bit.ly/Rink5Y
