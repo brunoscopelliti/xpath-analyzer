@@ -44,5 +44,5 @@ xPath Analyzer can evaluate each possible type of xPath (or XSLT expression).
 
 
 
-[1]: http://bit.ly/1bFabzr
+[1]: https://chrome.google.com/webstore/detail/xpath-analyzer/abfcnmcmpfhkmhoapcplnafnecpofkci/related?utm_source=chrome-ntp-icon
 [2]: http://bit.ly/Rink5Y
