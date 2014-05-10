@@ -5,7 +5,7 @@
 
 var parser = new window.DOMParser();
 
-if (chrome.runtime.onMessage.listeners_.length == 0) {
+if (chrome.runtime.onMessage.getListenerCount() === 0) {
 	chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 		var xml,
 			data = JSON.parse(message);
