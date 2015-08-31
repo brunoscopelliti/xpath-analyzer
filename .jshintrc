@@ -1,0 +1,9 @@
+{
+  "globals": {
+    "console": true,
+    "document": true,
+    "window": true
+  },
+  "esnext": true,
+  "eqnull": true
+}

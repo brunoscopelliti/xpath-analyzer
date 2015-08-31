@@ -31,17 +31,16 @@ module.exports = function (grunt) {
                 jshintrc: ".jshintrc",
                 ignores: ['*.min.js']
             },
-            all: ['./src/dom-events.js']
+            all: ['./src/index.js']
         },
 
         browserify: {
             test: {
                 files: {
-                    'tests/js/bundle.js': ['tests/index.js']
+                    'tests/bundle.js': ['tests/index.js']
                 },
                 options: {
-                    debug: true,
-                    transform: ['partialify']
+                    debug: true
                 }
             }
         },
@@ -55,13 +54,12 @@ module.exports = function (grunt) {
             js: {
                 files: [{
                     expand: true,
-                    cwd: './dist',
-                    src: ['dom-events.js'],
+                    cwd: './src',
+                    src: ['*.js'],
                     dest: './dist',
                     ext: '.min.js'
                 }]
             }
-
         },
 
         watch: {
@@ -69,14 +67,13 @@ module.exports = function (grunt) {
                 livereload: 35729
             },
             js: {
-                files: ['./src/dom-events.js', './tests/index.js'],
+                files: ['./src/*.js', './tests/*.js'],
                 tasks: ['build', 'browserify:test']
             }
         }
     });
 
     grunt.registerTask('dev', ['watch:js']);
-    grunt.registerTask('launch', ['connect:dev']);
     grunt.registerTask('build', ['uglify:js']);
 
     grunt.registerTask('test', ['build', 'browserify:test', 'connect:test']);
