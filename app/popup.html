@@ -4,62 +4,101 @@
     <title>xPath Analyzer</title>
     <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
     <style>
-      body { background: #000; height: auto; font-family: 'Muli', sans-serif; font-size: 14px; font-weight: 100; margin: 0; overflow-x: hidden; padding: 3px; width: 360px; }
-      
-      #main { background-color: #FFF; border-radius: 3px; margin: 0 auto; padding: 6px; }
-      
-      h1 { border-bottom: 1px solid #333; font-size: 16px; font-weight: 500; margin: 0 0 15px; padding: 0 0 2px; text-shadow: 0 0 0 #000; }
-      h2 { font-size: 14px; font-weight: 500; margin: 0 0 5px; padding: 0; }
+      body {
+        font-family: "Trebuchet MS";
+        font-size: 16px;
+        margin: 0;
+        padding: 5px;
+        width: 360px;
+      }
 
-      section label { display: block; }
+      .slide-container {
+        display: flex;
+        width: 1080px;
+      }
 
-      #xpath-input input { border: 1px solid #333; font-size: 14px; height: 24px; outline: none; padding: 5px 10px; width: 325px; }
-      #xpath-output { background: #E9E9E9; border: 1px solid #DDD; height: auto; margin: 15px 0 0; padding: 5px; }
+      main.mask,
+      section {
+        width: 360px;
+      }
 
-      pre { font-size: 12px; margin: 0; padding: 0; text-indent: 0; white-space: pre-line; }
-      pre .last-query { display: block; font-weight: 500; white-space: pre-line; width: 100%; word-wrap: break-word; }
-      pre .last-query-result { color: #00F; display: block; overflow: hidden; white-space: pre; width: 100%; word-wrap: break-word; }
+      h1 {
+        font-size: 20px;
+        font-weight: normal;
+      }
 
-      #error-alert { background: #F2DEDE; border: 1px solid #B94A48; color: #B94A48; height: auto; margin: 15px 0 0; padding: 5px; }
-      #error-alert h2{ margin: 0; }
-      #error-alert p { line-height: normal; margin: 0; padding: 0; }
+      label {
+        display: block;
+        margin-bottom: 6px;
+      }
 
-      footer { margin: 25px 0 0; }
-      footer ul { list-style: none; margin: 0; padding: 0; }
-      footer ul li { display: inline-block; margin: 0; padding: 0; }
-      footer ul li + li { margin-left: 10px; }
-      footer ul li a { color: #297C3B; text-decoration: none; text-shadow: 0 0 0 #1C5B2A; }
-      footer ul li a:hover { color: #1C5B2A; text-decoration: underline; }
-      .hidden { display: none; }
+      input {
+        box-sizing: border-box;
+        padding: 5px;
+        width: 100%;
+      }
+
+      .dots {
+        display: flex;
+        justify-content: center;
+      }
+
+      .dot {
+        background: #ddd;
+        border: 1px solid #fff;
+        border-radius: 10px;
+        cursor: pointer;
+        display: inline-block;
+        height: 10px;
+        margin: 0 2px;
+        text-align: center;
+        width: 10px;
+      }
+
+      .dot.selected{
+        border: 1px solid #333;
+      }
+
+      .dot.selected span {
+        background: #333;
+        border-radius: 10px;
+        display: block;
+        height: 4px;
+        margin: 3px auto;
+        width: 4px;
+      }
+
     </style>
   </head>
   <body>
-    <div id="main">
-      <h1>xPath Analyzer</h1>
-      <section id="xpath-input">
-        <label for="xpath">xPath</label>
-        <input type="text" name="xpath" id="xpath" autocapitalize="off" placeholder="Type the xPath, then press ENTER"/>
-      </section>
-      <section id="xpath-output" class="hidden">
-        <h2>Result for:</h2>
-        <pre id="result-box">
-          <span class="last-query"></span>
-          <span class="last-query-result"></span>
-        </pre>
-      </section>
-      <section id="error-alert" class="hidden">
-        <h2>Error:</h2>
-        <p>Sorry, an error occured.</p>
-        <p class="trace"></p>
-      </section>
-      <footer>
-        <ul>
-          <li><a href="https://twitter.com/brunoscopelliti" target="_blank">@brunoscopelliti</a></li>
-          <li><a href="https://chrome.google.com/webstore/detail/xpath-analyzer/abfcnmcmpfhkmhoapcplnafnecpofkci" target="_blank">About</a></li>
-          <li><a href="https://github.com/brunoscopelliti/xpath-analyzer/tree/master#xpath-analyzer" target="_blank">Fork</a></li>
-        </ul>
-      </footer>
+    
+    <h1>xPath Analyzer</h1>
+
+    <main class="mask">
+      <div class="slide-container">
+        <section id="xml-input">
+          <label for="url">The url of the XML resource</label>
+          <input type="url" name="url" id="url" autocapitalize="off" placeholder="Type the service's url, then press ENTER"/>
+        </section>
+        
+        <section id="xpath-analyzer">
+          <label for="xpath">The xPath you want to evaluate</label>
+          <input type="text" name="xpath" id="xpath" autocapitalize="off" placeholder="Type the xpath command, then press ENTER"/>
+          <div id="result"></div>
+        </section>
+
+        <section id="credits">
+          <p>@brunoscopelliti</p>
+        </section>
+      </div>
+    </main>
+
+    <div class="dots">
+      <span class="dot selected"><span></span></span>
+      <span class="dot"><span></span></span>
+      <span class="dot"><span></span></span>
     </div>
+
     <script type="text/javascript" src="index.js"></script>
   </body>
 </html>
