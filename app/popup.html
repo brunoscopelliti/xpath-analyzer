@@ -5,6 +5,8 @@
     <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
     <style>
       body {
+        border: 1px solid red;
+
         font-family: "Trebuchet MS";
         font-size: 16px;
         margin: 0;
@@ -19,6 +21,7 @@
 
       main.mask,
       section {
+        overflow: hidden;
         width: 360px;
       }
 
@@ -41,6 +44,7 @@
       .dots {
         display: flex;
         justify-content: center;
+        margin-top: 10px;
       }
 
       .dot {
@@ -76,27 +80,27 @@
 
     <main class="mask">
       <div class="slide-container">
-        <section id="xml-input">
+        <section data-tab="xml-input">
           <label for="url">The url of the XML resource</label>
           <input type="url" name="url" id="url" autocapitalize="off" placeholder="Type the service's url, then press ENTER"/>
         </section>
         
-        <section id="xpath-analyzer">
+        <section data-tab="xpath-analyzer">
           <label for="xpath">The xPath you want to evaluate</label>
           <input type="text" name="xpath" id="xpath" autocapitalize="off" placeholder="Type the xpath command, then press ENTER"/>
           <div id="result"></div>
         </section>
 
-        <section id="credits">
+        <section data-tab="credits">
           <p>@brunoscopelliti</p>
         </section>
       </div>
     </main>
 
-    <div class="dots">
-      <span class="dot selected"><span></span></span>
-      <span class="dot"><span></span></span>
-      <span class="dot"><span></span></span>
+    <div id="nav" class="dots">
+      <span class="dot selected" data-tab-btn="xml-input"><span></span></span>
+      <span class="dot" data-tab-btn="xpath-analyzer"><span></span></span>
+      <span class="dot" data-tab-btn="credits"><span></span></span>
     </div>
 
     <script type="text/javascript" src="index.js"></script>

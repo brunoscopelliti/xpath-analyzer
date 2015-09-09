@@ -1,5 +1,6 @@
 module.exports = function (grunt) {
 
+    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -9,8 +10,22 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
 
+        concat: {
+            options: {
+                separator: ';',
+            },
+            app: {
+                src: [
+                    'src/app-manager.js',
+                    'src/app-model.js'
+                ],
+                dest: 'dist/app.js',
+            }
+        },
+
         connect: {
             options: {
+                base: './',
                 hostname: '127.0.0.1',
                 keepalive: true,
                 open: true,
@@ -18,7 +33,6 @@ module.exports = function (grunt) {
             },
             test: {
                 options: {
-                    base: './tests',
                     port: 8081
                 }
             }
@@ -31,7 +45,7 @@ module.exports = function (grunt) {
                 jshintrc: ".jshintrc",
                 ignores: ['*.min.js']
             },
-            all: ['./src/index.js']
+            all: ['./src/*.js']
         },
 
         browserify: {
@@ -54,7 +68,7 @@ module.exports = function (grunt) {
             js: {
                 files: [{
                     expand: true,
-                    cwd: './src',
+                    cwd: './dist',
                     src: ['*.js'],
                     dest: './dist',
                     ext: '.min.js'
@@ -74,7 +88,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('dev', ['watch:js']);
-    grunt.registerTask('build', ['uglify:js']);
+    grunt.registerTask('build', ['concat:app'/*, 'uglify:js'*/]);
 
     grunt.registerTask('test', ['build', 'browserify:test', 'connect:test']);
 
