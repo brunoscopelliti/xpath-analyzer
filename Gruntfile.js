@@ -11,13 +11,12 @@ module.exports = function (grunt) {
     grunt.initConfig({
 
         concat: {
-            options: {
-                separator: ';',
-            },
             app: {
                 src: [
                     'src/app-manager.js',
-                    'src/app-model.js'
+                    'src/app-model.js',
+                    'src/utils/simple-delegation.js',
+                    'src/app.js'
                 ],
                 dest: 'dist/app.js',
             }
@@ -38,7 +37,12 @@ module.exports = function (grunt) {
             }
         },
 
-        copy: {},
+        copy: {
+            appjs: {
+                src: './dist/app.js',
+                dest: './app/app.js'
+            }
+        },
 
         jshint: {
             options: {
@@ -88,7 +92,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('dev', ['watch:js']);
-    grunt.registerTask('build', ['concat:app'/*, 'uglify:js'*/]);
+    grunt.registerTask('build', ['concat:app', /*'uglify:js', */ 'copy:appjs']);
 
     grunt.registerTask('test', ['build', 'browserify:test', 'connect:test']);
 
