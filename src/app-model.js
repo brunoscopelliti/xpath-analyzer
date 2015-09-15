@@ -6,36 +6,39 @@ ChromeAppManager.define("Model", [], function() {
   var id = -1;
   var one_ = Symbol("one");
 
-  const dataStore = [];
-  const watchers = [];
+  const modelStore = {};
 
-  function Model(initialValues){
-    this.guid_ = ++id;
-    dataStore[this.guid_] = new Map();
+  function Model(key, initialValues){
     
-    watchers[this.guid_] = {};
+    if (key && modelStore[key]) {
+      return modelStore[key];
+    }
+
+    this.guid_ = key || '_anon_' + ++id;
+    this.dataStore = new Map();
+    this.watchers = {};
+    
     for (let k in initialValues){
       if (initialValues.hasOwnProperty(k)){
-        dataStore[this.guid_].set(k, initialValues[k]);
+        this.dataStore.set(k, initialValues[k]);
       }
     }
+    
+    modelStore[key] = this;
   }
 
-  Model.getOrCreate = function(guid) {
-
-  };
 
   Model.prototype.get = function(key){
-    return dataStore[this.guid_].get(key);
+    return this.dataStore.get(key);
   };
 
   Model.prototype.set = function(key, value){
-    var currentValue = dataStore[this.guid_].get(key);
-    dataStore[this.guid_].set(key, value);
-    if (watchers[this.guid_][key]){
+    var currentValue = this.dataStore.get(key);
+    this.dataStore.set(key, value);
+    if (this.watchers[key]){
       let cancelled = false;
-      let undo = () => { cancelled = true; dataStore[this.guid_].set(key, currentValue); };
-      watchers[this.guid_][key].forEach(function(watchFn) {
+      let undo = () => { cancelled = true; this.dataStore.set(key, currentValue); };
+      this.watchers[key].forEach(function(watchFn) {
         if (!cancelled){
           watchFn.call(this, key, currentValue, value, undo);
           if (watchFn[one_]){
@@ -47,30 +50,35 @@ ChromeAppManager.define("Model", [], function() {
   };
 
   Model.prototype.watch = function(key, fn){
-    if (!watchers[this.guid_][key]){
-      watchers[this.guid_][key] = [];
+    if (!this.watchers[key]){
+      this.watchers[key] = [];
     }
-    watchers[this.guid_][key].push(fn);
+    this.watchers[key].push(fn);
   };
 
   Model.prototype.unwatch = function(key, fn){
-    if (typeof watchers[this.guid_][key] == "undefined" || watchers[this.guid_][key].length == 0){
+    if (typeof this.watchers[key] == "undefined" || this.watchers[key].length == 0){
       return false;
     }
     if (fn == null){
-      watchers[this.guid_][key] = [];
+      this.watchers[key] = [];
       return true;
     }
-    var watcherIndex = watchers[this.guid_][key].indexOf(fn);
+    var watcherIndex = this.watchers[key].indexOf(fn);
     if (watcherIndex < 0) {
       return false;
     }
-    return watchers[this.guid_][key].splice(watcherIndex, 1).length == 1;
+    return this.watchers[key].splice(watcherIndex, 1).length == 1;
   };
 
   Model.prototype.watchOne = function(key, fn){
     fn[one_] = true;
     this.watch(key, fn);
+  };
+
+  Model.prototype.destroy = function(key) {
+    this.dataStore = this.watchers = null;
+    return delete modelStore[key];
   };
 
   return Model;
