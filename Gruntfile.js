@@ -15,10 +15,20 @@ module.exports = function (grunt) {
                 src: [
                     'src/app-manager.js',
                     'src/app-model.js',
+                    'src/app-view.js',
                     'src/utils/simple-delegation.js',
                     'src/app.js'
                 ],
                 dest: 'dist/app.js',
+            },
+            applight: {
+                src: [
+                    'src/app-manager.js',
+                    'src/app-model.js',
+                    'src/app-view.js',
+                    'src/utils/simple-delegation.js'
+                ],
+                dest: 'dist/app-light.js',
             }
         },
 
@@ -86,14 +96,15 @@ module.exports = function (grunt) {
             },
             js: {
                 files: ['./src/*.js', './tests/*.js'],
-                tasks: ['build', 'browserify:test']
+                tasks: ['build-test', 'browserify:test']
             }
         }
     });
 
     grunt.registerTask('dev', ['watch:js']);
-    grunt.registerTask('build', ['concat:app', /*'uglify:js', */ 'copy:appjs']);
+    grunt.registerTask('build-test', ['concat:applight']);
+    grunt.registerTask('build-prod', ['concat:app', /*'uglify:js', */ 'copy:appjs']);
 
-    grunt.registerTask('test', ['build', 'browserify:test', 'connect:test']);
+    grunt.registerTask('test', ['build-test', 'browserify:test', 'connect:test']);
 
 };
