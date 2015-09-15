@@ -239,8 +239,71 @@ tape('watchOne model property', function(t) {
 
 });
 
+
+/**
+ * module utils/simple-delegation.js
+ */
+
+tape('delegate', function(t) { 
+
+  ChromeAppManager.require(['delegate'], function(delegate) {
+    t.ok(typeof delegate, 'function', 'delegate is a function');
   });
 
   t.end();
 
 });
+
+tape('delegate (target == delegator)', function(t) { 
+
+  ChromeAppManager.require(['delegate'], function(delegate) {
+    
+    setup_('<div id="box"><button id="btn">Click here</button></div>');
+
+    var spy = sinon.spy();
+    box.addEventListener('click', delegate('#btn', spy));
+    btn.click();
+
+    t.ok(spy.calledOnce, 'event handler is called once');
+    t.ok(spy.getCall(0).calledOn(btn), 'event handler is called on the correct context "this"');
+    t.ok(spy.getCall(0).args[0] instanceof Event, 'event handler receives the dom event object as first argument');
+
+  });
+
+  t.end();
+
+});
+
+tape('delegate (target is inside delegator)', function(t) { 
+
+  ChromeAppManager.require(['delegate'], function(delegate) {
+    
+    setup_('<div id="box"><button id="btn"><span id="text">Click here</span></button></div>');
+
+    var spy = sinon.spy();
+    box.addEventListener('click', delegate('#btn', spy));
+    text.click();
+
+    t.ok(spy.calledOnce, 'event handler is called once');
+    t.ok(spy.getCall(0).calledOn(btn), 'event handler is called on the correct context "this"');
+    t.ok(spy.getCall(0).args[0] instanceof Event, 'event handler receives the dom event object as first argument');
+
+  });
+
+  t.end();
+
+});
+
+
+
+
+
+
+
+function setup_(dom) {
+  document.body.innerHTML = dom;
+}
+
+function teardown_(dom) {
+  document.body.innerHTML = '';
+}

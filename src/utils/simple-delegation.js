@@ -23,7 +23,7 @@ ChromeAppManager.define("delegate", [], function() {
     return function(evt) {
       var el;
       if(el = match_(evt.target, selector, this)){
-        fn.apply(el);
+        fn.call(el, evt);
       }
     };
   };
