@@ -241,6 +241,130 @@ tape('watchOne model property', function(t) {
 
 
 /**
+ * module app-view.js
+ */
+
+tape('module app-view.js:', function(t) { t.end(); });
+
+tape('interface', function(t) { 
+
+  ChromeAppManager.require(['view'], function(view) {
+    t.equal(typeof view, 'function', 'view is a function');
+    t.equal(typeof view.register, 'function', 'view is a function');
+    t.equal(typeof view.reset, 'function', 'view is a function');
+  });
+
+  t.end();
+
+});
+
+tape('register a new view', function(t) { 
+
+  ChromeAppManager.require(['view'], function(view) {
+
+    setup_('<div id="main">Hello world!</div>');
+
+    var fakeModel = { val: 42 };
+    
+    var homeView = view.register('home', { 
+      selector: '#main', 
+      get isEnabled() {
+        return fakeModel.val === 42;
+      }
+    });
+
+    t.ok(homeView.isEnabled, 'view is enabled');
+    t.equal(homeView.el.innerText, 'Hello world!', 'view root el is computed');
+
+    t.equal(homeView.isSelected, false, 'view default "isSelected" is set');
+    t.equal(homeView.next, null, 'view default "next" is set');
+    t.equal(homeView.prev, null, 'view default "prev" is set');
+    t.equal(typeof homeView.setup, 'function', 'view default "setup" is set');
+    t.equal(typeof homeView.teardown, 'function', 'view default "teardown" is set');
+
+    fakeModel.val++;
+    t.ok(!homeView.isEnabled, 'view is disabled');
+
+    var res = view.reset('home');
+    t.ok(res && typeof view('home') == 'undefined', 'view does not exist anymore');
+
+  });
+
+  teardown_();
+
+  t.end();
+
+});
+
+tape('register a view throw a ViewConfigError', function(t) { 
+
+  ChromeAppManager.require(['view'], function(view) {
+    var badFn = view.register.bind(view, 'home');
+    t.throws(badFn, /ViewConfigError/, 'throws a ViewConfigError exception');
+  });
+
+  t.end();
+
+});
+
+tape('select enabled view', function(t) { 
+
+  ChromeAppManager.require(['view'], function(view) {
+
+    setupView_.apply(view);
+
+
+    // @todo
+
+    view.reset();
+
+  });
+
+  t.end();
+
+});
+
+
+
+function setupView_(){
+
+  setup_('\
+    <div id="home">\
+      <h1>Welcome</h1>\
+      <button id="home-btn">Enter</button>\
+    </div>\
+    <div id="login">\
+      <h1>Login</h1>\
+      <input name="user" />\
+      <button id="home-btn">Log in</button>\
+    </div>\
+    <div id="cart">\
+      <h1>Shopping bag</h1>\
+      <p>You have <b id="count"></b> products in your shopping bag. <span id="buy">Nuy now.</span>.</p>\
+    </div>');
+
+  var home = this.register('home', {
+    selector: '#home',
+    isDefault: true,
+    next: 'login'
+  });
+
+  var login = this.register('login', {
+    selector: '#login',
+    prev: 'home',
+    next: 'cart'
+  });
+
+  var cart = this.register('cart', {
+    selector: '#cart',
+    prev: 'login',
+    get isEnabled() { return true; }
+  });
+
+}
+
+
+/**
  * module utils/simple-delegation.js
  */
 
