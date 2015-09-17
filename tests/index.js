@@ -1,6 +1,9 @@
 
+"use strict";
+
 var tape = require('tape');
 var sinon = require('sinon');
+
 
 /**
  * module app-manager.js
@@ -313,8 +316,20 @@ tape('select enabled view', function(t) {
 
     setupView_.apply(view);
 
+    var home = view('home');
+    var login = view('login');
+    var cart = view('cart');
 
-    // @todo
+    var undoSpy = sinon.spy();
+    var homeTeardownSpy = sinon.spy(home, 'teardown');
+    var cartTeardownSpy = sinon.spy(cart, 'teardown');
+    var loginSetupSpy = sinon.spy(login, 'setup');
+
+    login.select(undoSpy);
+
+    t.ok(homeTeardownSpy.calledOnce && !cartTeardownSpy.called, 'first execute teardown for the selected view');
+    t.ok(!undoSpy.called && loginSetupSpy.calledOnce, 'then execute setup of the new selected view');
+    t.ok(!home.isSelected && login.isSelected, 'the view was selected');
 
     view.reset();
 
@@ -324,6 +339,55 @@ tape('select enabled view', function(t) {
 
 });
 
+tape('select not enabled view', function(t) { 
+
+  ChromeAppManager.require(['view'], function(view) {
+
+    setupView_.apply(view);
+
+    var home = view('home');
+    var login = view('login');
+    var cart = view('cart');
+
+    var undoSpy = sinon.spy();
+    var homeTeardownSpy = sinon.spy(home, 'teardown');
+    var loginTeardownSpy = sinon.spy(login, 'teardown');
+    var cartSetupSpy = sinon.spy(cart, 'setup');
+
+    cart.select(undoSpy);
+
+    t.ok(!homeTeardownSpy.called && !loginTeardownSpy.called && !cartSetupSpy.called, 'teardown, and setup are not executed at all');
+    t.ok(undoSpy.called, 'undo is called');
+    t.ok(home.isSelected && !cart.isSelected, 'selected view didn\'t change');
+
+    view.reset();
+
+  });
+
+  t.end();
+
+});
+
+tape('view(:selected) returns the selected view', function(t) { 
+
+  ChromeAppManager.require(['view'], function(view) {
+
+    setupView_.apply(view);
+
+    var home = view('home');
+    var login = view('login');
+    var cart = view('cart');
+    var selectedView = view(':selected');    
+
+    t.equal(selectedView, home, ':selected returns the selected view');
+
+    view.reset();
+
+  });
+
+  t.end();
+
+});
 
 
 function setupView_(){
@@ -345,7 +409,7 @@ function setupView_(){
 
   var home = this.register('home', {
     selector: '#home',
-    isDefault: true,
+    isSelected: true,
     next: 'login'
   });
 
@@ -358,7 +422,7 @@ function setupView_(){
   var cart = this.register('cart', {
     selector: '#cart',
     prev: 'login',
-    get isEnabled() { return true; }
+    get isEnabled() { return false; }
   });
 
 }
@@ -368,10 +432,12 @@ function setupView_(){
  * module utils/simple-delegation.js
  */
 
-tape('delegate', function(t) { 
+tape('module delegate.js:', function(t) { t.end(); });
+
+tape('interface', function(t) { 
 
   ChromeAppManager.require(['delegate'], function(delegate) {
-    t.ok(typeof delegate, 'function', 'delegate is a function');
+    t.equal(typeof delegate, 'function', 'delegate is a function');
   });
 
   t.end();
@@ -394,6 +460,8 @@ tape('delegate (target == delegator)', function(t) {
 
   });
 
+  teardown_();
+
   t.end();
 
 });
@@ -414,15 +482,78 @@ tape('delegate (target is inside delegator)', function(t) {
 
   });
 
+  teardown_();
+
   t.end();
 
 });
 
 
+/**
+ * module utils/loop-props.js
+ */
 
+tape('module loop-props.js:', function(t) { t.end(); });
 
+tape('interface', function(t) { 
 
+  ChromeAppManager.require(['loopProps'], function(loopProps) {
+    t.equal(typeof loopProps, 'function', 'loopProps is a function');
+  });
 
+  t.end();
+
+});
+
+tape('simple loop', function(t) { 
+
+  ChromeAppManager.require(['loopProps'], function(loopProps) {
+
+    var base_ = { z: 100 };
+    var obj = Object.create(base_);
+
+    obj.a = 1;
+    obj.b = 2;
+
+    var spy = sinon.spy();
+
+    loopProps(obj, spy);
+
+    t.ok(spy.calledTwice, 'iterator is called once for each property');
+
+    var call1 = spy.getCall(0);
+    t.equal(call1.args[0], 1, 'first argument is the property value');
+    t.equal(call1.args[1], "a", 'second argument is the property key');
+    t.equal(call1.args[2], obj, 'third argument is the original object');
+
+    var call2 = spy.getCall(1);
+    t.equal(call2.args[0], 2, 'first argument is the property value');
+    t.equal(call2.args[1], "b", 'second argument is the property key');
+    t.equal(call2.args[2], obj, 'third argument is the original object');
+  });
+
+  t.end();
+
+});
+
+tape('loop with bound context', function(t) { 
+
+  ChromeAppManager.require(['loopProps'], function(loopProps) {
+
+    var obj = { n: 3 }
+    var context = { count: 42 };
+
+    var spy = sinon.spy();
+
+    loopProps(obj, spy, context);
+
+    t.ok(spy.calledOnce, 'iterator is called once for each property');
+    t.ok(spy.calledOn(context), 'iterator is called on the specified context');
+  });
+
+  t.end();
+
+});
 
 function setup_(dom) {
   document.body.innerHTML = dom;

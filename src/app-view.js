@@ -1,7 +1,12 @@
 
-ChromeAppManager.define('view', [], function() {
+ChromeAppManager.define('view', ['loopProps'], function(loopProps) {
 
   "use strict";
+
+  function ViewAccessError(msg) {
+    this.name = 'ViewAccessError';
+    this.message = msg;
+  }
 
   function ViewConfigError(msg) {
     this.name = 'ViewConfigError';
@@ -9,6 +14,7 @@ ChromeAppManager.define('view', [], function() {
   }
 
   ViewConfigError.prototype = new Error();
+  ViewAccessError.prototype = new Error();
   
 
   const defaults_ = {
@@ -20,7 +26,7 @@ ChromeAppManager.define('view', [], function() {
     isEnabled: true,
 
     isSelected: false,
-    
+  
     setup: function() {},
     
     teardown: function() {}
@@ -30,16 +36,38 @@ ChromeAppManager.define('view', [], function() {
   var base_ = Object.create(defaults_, {
 
     select: {
-      value: function() {
+      value: function(failFn) {
+        try {
+          if (!this.isEnabled) {
+            throw new ViewAccessError(`${this.name} is currently disabled`);
+          }
+          loopProps(views_, function teardown_(view) {
+            if (view.isSelected) {
+              view.teardown();
+              view.isSelected = false;
+            }
+          });
+          this.setup();
+          this.isSelected = true;
+        }
+        catch(err){
+          failFn();
+        }
+        return this;
       }
     }
 
   });
 
 
-  var views_ = Object.create(null);
+  var views_ = {};
 
   function view(name){
+
+    if (name == ':selected'){
+      // @todo
+      // throw "to be implemented";
+    }
     
     return views_[name];
   
@@ -49,6 +77,9 @@ ChromeAppManager.define('view', [], function() {
 
     if (!name){
       throw new ViewConfigError('missing mandatory argument: name');
+    }
+    else if (/:/.test(name)){
+      throw new ViewConfigError('view name cannot contain ":"');
     }
     else if (views_[name]){
       return views_[name];
@@ -85,4 +116,3 @@ ChromeAppManager.define('view', [], function() {
   return view;
 
 });
-

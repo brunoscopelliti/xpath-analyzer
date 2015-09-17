@@ -1,10 +1,12 @@
 
 /**
- * @todo missing coverage
- * usage:
- * document.addEventListener("click", delegate(".elem", function(evt) {});
+ * A simple wrapper to handle event delegation
+ * usage: el.addEventListener("click", delegate(".elem", function(evt) { ... });
  */
+ 
 ChromeAppManager.define("delegate", [], function() {
+
+  "use strict";
 
   function match_(target, selector, boundElement){
     if (target === boundElement){

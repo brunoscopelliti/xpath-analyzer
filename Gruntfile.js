@@ -14,9 +14,10 @@ module.exports = function (grunt) {
             app: {
                 src: [
                     'src/app-manager.js',
+                    'src/utils/simple-delegation.js',
+                    'src/utils/loop-props.js',
                     'src/app-model.js',
                     'src/app-view.js',
-                    'src/utils/simple-delegation.js',
                     'src/app.js'
                 ],
                 dest: 'dist/app.js',
@@ -24,9 +25,10 @@ module.exports = function (grunt) {
             applight: {
                 src: [
                     'src/app-manager.js',
+                    'src/utils/simple-delegation.js',
+                    'src/utils/loop-props.js',
                     'src/app-model.js',
-                    'src/app-view.js',
-                    'src/utils/simple-delegation.js'
+                    'src/app-view.js'
                 ],
                 dest: 'dist/app-light.js',
             }
