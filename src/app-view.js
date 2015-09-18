@@ -113,6 +113,12 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
       }
     }
 
+    // when the view is registered as preselected
+    // we've to run immediately its setup
+    if (config.isSelected){
+      views_[name].setup();
+    }
+
     return views_[name];
 
   };
