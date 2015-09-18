@@ -3,18 +3,12 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
 
   "use strict";
 
-  function ViewAccessError(msg) {
-    this.name = 'ViewAccessError';
-    this.message = msg;
-  }
-
   function ViewConfigError(msg) {
     this.name = 'ViewConfigError';
     this.message = msg;
   }
 
   ViewConfigError.prototype = new Error();
-  ViewAccessError.prototype = new Error();
   
 
   const defaults_ = {
@@ -37,23 +31,23 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
 
     select: {
       value: function(failFn) {
-        try {
+        return new Promise((res, rej) => {
+
           if (!this.isEnabled) {
-            throw new ViewAccessError(`${this.name} is currently disabled`);
+            return rej({ status: 401 });
           }
-          loopProps(views_, function teardown_(view) {
-            if (view.isSelected) {
-              view.teardown();
-              view.isSelected = false;
-            }
-          });
+
+          let currView = view(':selected');
+
+          currView.teardown();
           this.setup();
+
+          currView.isSelected = false;
           this.isSelected = true;
-        }
-        catch(err){
-          failFn();
-        }
-        return this;
+
+          res(this);
+
+        });
       }
     },
 

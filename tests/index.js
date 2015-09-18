@@ -348,22 +348,23 @@ tape('select enabled view', function(t) {
     var login = view('login');
     var cart = view('cart');
 
-    var undoSpy = sinon.spy();
+    var spy = sinon.spy();
     var homeTeardownSpy = sinon.spy(home, 'teardown');
     var cartTeardownSpy = sinon.spy(cart, 'teardown');
     var loginSetupSpy = sinon.spy(login, 'setup');
 
-    login.select(undoSpy);
+    login.select().then(spy).then(function() {
+      t.ok(spy.calledOnce, '(if defined) then execute other steps');
+
+      view.reset();
+      t.end();
+    });
 
     t.ok(homeTeardownSpy.calledOnce && !cartTeardownSpy.called, 'first execute teardown for the selected view');
-    t.ok(!undoSpy.called && loginSetupSpy.calledOnce, 'then execute setup of the new selected view');
+    t.ok(loginSetupSpy.calledOnce, 'then execute setup of the new selected view');
     t.ok(!home.isSelected && login.isSelected, 'the view was selected');
 
-    view.reset();
-
   });
-
-  t.end();
 
 });
 
@@ -377,22 +378,23 @@ tape('select not enabled view', function(t) {
     var login = view('login');
     var cart = view('cart');
 
-    var undoSpy = sinon.spy();
+    var spy = sinon.spy();
     var homeTeardownSpy = sinon.spy(home, 'teardown');
     var loginTeardownSpy = sinon.spy(login, 'teardown');
     var cartSetupSpy = sinon.spy(cart, 'setup');
 
-    cart.select(undoSpy);
+    cart.select().catch(spy).then(function() {
+      t.ok(spy.called, 'rejection is captured');
+      t.ok(spy.getCall(0).args[0], 401, 'error code is 401');
+
+      view.reset();
+      t.end();
+    });
 
     t.ok(!homeTeardownSpy.called && !loginTeardownSpy.called && !cartSetupSpy.called, 'teardown, and setup are not executed at all');
-    t.ok(undoSpy.called, 'undo is called');
     t.ok(home.isSelected && !cart.isSelected, 'selected view didn\'t change');
 
-    view.reset();
-
   });
-
-  t.end();
 
 });
 
@@ -547,16 +549,16 @@ tape('simple loop', function(t) {
 
     loopProps(obj, spy);
 
-    t.ok(spy.calledTwice, 'iterator is called once for each property');
+    t.ok(spy.calledTwice, 'iterator is called once for each own property');
 
     var call1 = spy.getCall(0);
     t.equal(call1.args[0], 1, 'first argument is the property value');
-    t.equal(call1.args[1], "a", 'second argument is the property key');
+    t.equal(call1.args[1], 'a', 'second argument is the property key');
     t.equal(call1.args[2], obj, 'third argument is the original object');
 
     var call2 = spy.getCall(1);
     t.equal(call2.args[0], 2, 'first argument is the property value');
-    t.equal(call2.args[1], "b", 'second argument is the property key');
+    t.equal(call2.args[1], 'b', 'second argument is the property key');
     t.equal(call2.args[2], obj, 'third argument is the original object');
   });
 
