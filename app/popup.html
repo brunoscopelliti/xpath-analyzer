@@ -14,14 +14,23 @@
         width: 360px;
       }
 
-      .slide-container {
+      #slide-container {
         display: flex;
+        position: absolute;
+        left: 0;
         width: 1080px;
+        transition: left .5s ease-in-out;
       }
 
+      #slide-container.view1 { left: 0px; }
+      #slide-container.view2 { left: -360px; }
+      #slide-container.view3 { left: -720px; }
+
       main.mask,
-      section {
+      section.tab {
+        min-height: 120px;
         overflow: hidden;
+        position: relative;
         width: 360px;
       }
 
@@ -79,19 +88,19 @@
     <h1>xPath Analyzer</h1>
 
     <main class="mask">
-      <div class="slide-container">
-        <section data-tab="xml-input">
+      <div id="slide-container">
+        <section class="tab" data-tab="xml-input" style="background: green;">
           <label for="url">The url of the XML resource</label>
           <input type="url" name="url" id="url" autocapitalize="off" placeholder="Type the service's url, then press ENTER"/>
         </section>
         
-        <section data-tab="xpath-analyzer">
+        <section class="tab" data-tab="xpath-analyzer" style="background: yellow;">
           <label for="xpath">The xPath you want to evaluate</label>
           <input type="text" name="xpath" id="xpath" autocapitalize="off" placeholder="Type the xpath command, then press ENTER"/>
           <div id="result"></div>
         </section>
 
-        <section data-tab="credits">
+        <section class="tab" data-tab="credits" style="background: red;">
           <p>@brunoscopelliti</p>
         </section>
       </div>
@@ -103,6 +112,12 @@
       <span class="dot" data-tab-btn="credits"><span></span></span>
     </div>
 
-    <script type="text/javascript" src="index.js"></script>
+
+
+
+    <script type="text/javascript" src="./app.js"></script>
+
+
+
   </body>
 </html>
