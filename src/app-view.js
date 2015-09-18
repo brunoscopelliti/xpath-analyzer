@@ -12,6 +12,8 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
   
 
   const defaults_ = {
+
+    watches: [],
     
     prev: null,
     
@@ -106,6 +108,9 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
         Object.defineProperty(views_[name], k, Object.getOwnPropertyDescriptor(config, k));
       }
     }
+
+
+    // @todo register watches
 
     // when the view is registered as preselected
     // we've to run immediately its setup

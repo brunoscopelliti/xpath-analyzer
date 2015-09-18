@@ -74,6 +74,8 @@ window.onload = function () {
 
     view.register('xpath-analyzer', { 
       selector: '[data-tab="xpath-analyzer"]',
+      // @todo register watch, or something like this
+      watches: [model_, {'prop': 'viewMethod'}, {'?prop':'viewMethod'}],
       prev: 'xml-input',
       next: 'credits',
       get isEnabled() {
@@ -139,4 +141,3 @@ window.onload = function () {
   require(['Model', 'view', 'delegate'], main);
 
 };
-
