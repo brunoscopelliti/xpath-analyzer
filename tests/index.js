@@ -583,6 +583,97 @@ tape('loop with bound context', function(t) {
 
 });
 
+
+/**
+ * module utils/filter-objects.js
+ */
+
+tape('module filter-objects.js:', function(t) { t.end(); });
+
+tape('interface', function(t) { 
+
+  ChromeAppManager.require(['filterProps'], function(filterProps) {
+    t.equal(typeof filterProps, 'function', 'filterProps is a function');
+  });
+
+  t.end();
+
+});
+
+tape('filter object', function(t) { 
+
+  ChromeAppManager.require(['filterProps'], function(filterProps) {
+
+    var base_ = { inherited: { flag: true } };
+    var obj = Object.create(base_);
+
+    obj.a = { flag: false };
+    obj.b = { flag: true, key: 'b' };
+    obj.c = { flag: false };
+
+    var spy = sinon.spy((obj, k, original) => obj.flag === true);
+
+    var res = filterProps(obj, spy);
+
+    t.ok(spy.calledThrice, 'iterator is called once for each own property');
+
+    var call1 = spy.getCall(0);
+    t.equal(call1.args[0].flag, false, 'first argument is the property value');
+    t.equal(call1.args[1], 'a', 'second argument is the property key');
+    t.equal(call1.args[2], obj, 'third argument is the original object');
+    t.ok(res.length == 1 && res[0].key == 'b', 'result was computed properly');
+
+  });
+
+  t.end();
+
+});
+
+tape('filter object when no match returns empty array', function(t) { 
+
+  ChromeAppManager.require(['filterProps'], function(filterProps) {
+
+    var obj = {
+      a: { flag: false }
+    };
+
+    var spy = sinon.spy((obj, k, original) => obj.flag === true);
+    var res = filterProps(obj, spy);
+
+    t.ok(spy.calledOnce, 'iterator is called once for each own property');
+    t.ok(res.length == 0, 'result was computed properly');
+
+  });
+
+  t.end();
+
+});
+
+tape('filter with bound context', function(t) { 
+
+  ChromeAppManager.require(['filterProps'], function(filterProps) {
+
+    var obj = { a: { qty: 3, id: 1 }, b: { qty: 12, id: 2 } }
+    var context = { limit: 10 };
+
+    var spy = sinon.spy(function(obj, k, original) { 
+      return obj.qty <= this.limit; 
+    });
+
+    var res = filterProps(obj, spy, context);
+
+    t.ok(spy.calledTwice, 'iterator is called once for each property');
+    t.ok(spy.calledOn(context), 'iterator is called on the specified context');
+    t.ok(res.length == 1 && res[0].id == 1, 'result was computed properly');
+
+  });
+
+  t.end();
+
+});
+
+
+
 function setup_(dom) {
   document.body.innerHTML = dom;
 }
