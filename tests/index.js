@@ -43,6 +43,22 @@ tape('define/require methods', function(t) {
 
 });
 
+tape('require with context', function(t) {
+
+  var context = { factor: 2 };
+
+  ChromeAppManager.define('number', [], function() {
+    return 21;
+  });
+
+  ChromeAppManager.require(['number'], function(val) {
+    t.equal(val*context.factor, 42, 'require accepts a context on which execute the function');
+  }, context);
+
+  t.end();
+
+});
+
 
 /**
  * module model.js

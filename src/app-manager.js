@@ -11,9 +11,10 @@ var ChromeAppManager = (function() {
   
   }
 
-  function require(deps, fn){
+  function require(deps, fn, context){
 
-    return fn.apply(fn, deps.map(m => store_[m]));
+    context = context || null;
+    return fn.apply(context, deps.map(m => store_[m]));
 
   }
 
