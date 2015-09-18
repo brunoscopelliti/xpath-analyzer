@@ -15,7 +15,9 @@ module.exports = function (grunt) {
                 src: [
                     'src/app-manager.js',
                     'src/utils/simple-delegation.js',
+                    'src/utils/simple-xhr.js',
                     'src/utils/loop-props.js',
+                    'src/utils/filter-props.js',
                     'src/app-model.js',
                     'src/app-view.js',
                     'src/app.js'
@@ -26,7 +28,9 @@ module.exports = function (grunt) {
                 src: [
                     'src/app-manager.js',
                     'src/utils/simple-delegation.js',
+                    'src/utils/simple-xhr.js',
                     'src/utils/loop-props.js',
+                    'src/utils/filter-props.js',
                     'src/app-model.js',
                     'src/app-view.js'
                 ],
@@ -97,7 +101,7 @@ module.exports = function (grunt) {
                 livereload: 35729
             },
             js: {
-                files: ['./src/*.js', './tests/*.js'],
+                files: ['./src/*.js', './src/**/*.js', './tests/*.js'],
                 tasks: ['build-test', 'browserify:test']
             }
         }
