@@ -1,5 +1,5 @@
 
-ChromeAppManager.define('view', ['loopProps'], function(loopProps) {
+ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps, filterProps) {
 
   "use strict";
 
@@ -77,8 +77,7 @@ ChromeAppManager.define('view', ['loopProps'], function(loopProps) {
   function view(name){
 
     if (name == ':selected'){
-      // @todo
-      // throw "to be implemented";
+      return filterProps(views_, view => view.isSelected)[0];
     }
     
     return views_[name];
@@ -105,6 +104,8 @@ ChromeAppManager.define('view', ['loopProps'], function(loopProps) {
     
     views_[name].name = name;
     views_[name].el = document.querySelector(config.selector);
+    views_[name].guid_ = ++id;
+    views_[name].data_ = {};
 
     for (var k in config){
       if (config.hasOwnProperty(k)){
