@@ -11,7 +11,7 @@ ChromeAppManager.define("loopProps", [], function() {
   return function loopProps(targetObj, iterator, context){
     context = context || this;
     for (let k in targetObj){
-      if (targetObj.hasOwnProperty(k)){
+      if (Object.prototype.hasOwnProperty.call(targetObj, k)){
         iterator.call(context, targetObj[k], k, targetObj);
       }
     }

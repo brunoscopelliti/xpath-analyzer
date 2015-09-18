@@ -59,8 +59,8 @@ ChromeAppManager.define('view', ['loopProps'], function(loopProps) {
 
   });
 
-
-  var views_ = {};
+  var id = 0;
+  var views_ = Object.create(null);
 
   function view(name){
 
