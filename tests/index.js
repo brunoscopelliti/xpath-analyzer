@@ -299,6 +299,34 @@ tape('register a new view', function(t) {
 
 });
 
+tape('store/read private view data', function(t) { 
+
+  ChromeAppManager.require(['view'], function(view) {
+
+    setup_('<div id="main">Hello world!</div>');
+
+    var homeView = view.register('home', { 
+      selector: '#main'
+    });
+
+    var otherView = view.register('other', { 
+      selector: '#other'
+    });
+
+    homeView.store('tmpValue', 42);
+    t.equal(homeView.read('tmpValue'), 42, 'view does not exist anymore');
+    t.equal(otherView.read('tmpValue'), undefined, 'view does not exist anymore');
+
+    view.reset();
+
+  });
+
+  teardown_();
+
+  t.end();
+
+});
+
 tape('register a view throw a ViewConfigError', function(t) { 
 
   ChromeAppManager.require(['view'], function(view) {

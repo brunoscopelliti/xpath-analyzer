@@ -55,6 +55,18 @@ ChromeAppManager.define('view', ['loopProps'], function(loopProps) {
         }
         return this;
       }
+    },
+
+    read: {
+      value: function(key) {
+        return this.data_[key];
+      }
+    },
+
+    store: {
+      value: function(key, value) {
+        this.data_[key] = value;
+      }
     }
 
   });
