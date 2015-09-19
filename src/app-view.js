@@ -13,18 +13,28 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
 
   const defaults_ = {
 
+    // a list of prop's watches which will be automatically set
+    // duging the registration phase
     watches: [],
-    
+
+    // the name of the previous view    
     prev: null,
     
+    // the name of the next view
     next: null,
     
+    // define if the view can be accessed
     isEnabled: true,
 
+    // define if the view is currently selected
     isSelected: false,
   
+    // task which should be executed before 
+    // the view is displayed
     setup: function() {},
     
+    // task which should be executed before 
+    // the view is hidden
     teardown: function() {}
   
   };
@@ -82,6 +92,9 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
 
   view.register = function register(name, config) {
 
+    // check the consistency of the parameters
+    // name, and config.selector are mandatory information
+
     if (!name){
       throw new ViewConfigError('missing mandatory argument: name');
     }
@@ -95,6 +108,10 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
     if (!config || !config.selector) {
       throw new ViewConfigError('missing mandatory configuration property: selector');
     }
+
+
+    // create the view base data
+    // and apply the configuration
 
     views_[name] = Object.create(base_);
     
@@ -122,7 +139,7 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
 
   };
 
-  view.reset = function(name){
+  view.reset = function reset(name){
 
     if (name){
       return delete views_[name];
