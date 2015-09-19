@@ -123,7 +123,40 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
     loopProps(config, (val, k, original) => Object.defineProperty(views_[name], k, Object.getOwnPropertyDescriptor(original, k)))
 
 
-    // @todo register watches
+    // register watches.
+    // watches property is an array; first argument is the model, 
+    // then all the others are objects with pais of property/handler.
+
+    // if the property name starts with '?', the handler is fired only if
+    // the view is currently selected.
+    // handler should be the name of a method in the view context.
+
+    if (views_[name].watches.length > 0){
+      let model = views_[name].watches.shift();
+      views_[name].watches.forEach(function(obj){
+    
+        var prop = Object.keys(obj)[0];
+        var watcherName = obj[prop];
+
+        var fn, handler = typeof watcherName == 'function' ? watcherName : this[watcherName];
+        
+        if (prop.startsWith('?')){
+          prop = prop.replace('?', '');
+
+          // @todo when rest parameters will be supported in Chrome, 
+          // this should be refactored using an arrow function
+          fn = function() { this.isSelected && handler.apply(this, arguments); }.bind(this);
+        }
+        else{
+          fn = handler.bind(this);
+        }
+
+        model.watch(prop, fn);
+
+      }, views_[name]);
+
+    }
+
 
     // when the view is registered as preselected
     // we've to run immediately its setup

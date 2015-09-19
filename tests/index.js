@@ -315,6 +315,126 @@ tape('register a new view', function(t) {
 
 });
 
+tape('register a new view with watcher', function(t) { 
+
+  ChromeAppManager.require(['Model', 'view'], function(Model, view) {
+
+    setup_('<div id="main">Hello world!</div>');
+
+    var model_ = new Model('xapp', { val: 42 });
+    var spy = sinon.spy();
+    
+    var homeView = view.register('home', { 
+      selector: '#main', 
+      isSelected: false,
+      watches: [model_, {val: 'handler'}],
+      handler: spy
+    });
+
+    model_.set('val', 100);
+
+    t.ok(spy.calledOnce, 'watcher is fired even if the view is not selected');
+    t.ok(spy.calledOn(homeView), 'the context of the watcher is the view');
+
+    var call = spy.getCall(0);
+    t.equal(call.args[0], 'val', 'first argument is the property name');
+    t.equal(call.args[1], 42, 'second argument is the property initial value');
+    t.equal(call.args[2], 100, 'third argument is the property new value');
+    t.equal(typeof(call.args[3]), 'function', 'fourth argument is a function that allows to revert the action');
+
+    model_.destroy();
+    view.reset();
+
+  });
+
+  teardown_();
+
+  t.end();
+
+});
+
+tape('register a new view with conditional watcher', function(t) { 
+
+  ChromeAppManager.require(['Model', 'view'], function(Model, view) {
+
+    setup_('<div id="main">Hello world!</div>');
+
+    var model_ = new Model('xapp', { val: 42 });
+    var spy = sinon.spy();
+    
+    var homeView = view.register('home', { 
+      selector: '#main', 
+      isSelected: false,
+      watches: [model_, {'?val': 'handler'}],
+      handler: spy
+    });
+
+    model_.set('val', 100);
+
+    t.ok(!spy.called, 'since the view is not selected watcher is not fired');
+
+
+    homeView.isSelected = true;
+    model_.set('val', 42);
+
+
+    t.ok(spy.calledOnce, 'since the view is now selected the watcher is fired');
+    t.ok(spy.calledOn(homeView), 'the context of the watcher is the view');
+
+    var call = spy.getCall(0);
+    t.equal(call.args[0], 'val', 'first argument is the property name');
+    t.equal(call.args[1], 100, 'second argument is the property initial value');
+    t.equal(call.args[2], 42, 'third argument is the property new value');
+    t.equal(typeof(call.args[3]), 'function', 'fourth argument is a function that allows to revert the action');
+
+    model_.destroy();
+    view.reset();
+    
+  });
+
+  teardown_();
+
+  t.end();
+
+});
+
+tape('register a new view with function watcher', function(t) { 
+
+  ChromeAppManager.require(['Model', 'view'], function(Model, view) {
+
+    setup_('<div id="main">Hello world!</div>');
+
+    var model_ = new Model('xapp', { val: 42 });
+    var spy = sinon.spy();
+    
+    var homeView = view.register('home', { 
+      selector: '#main', 
+      isSelected: false,
+      watches: [model_, {val: spy}]
+    });
+
+    model_.set('val', 100);
+
+    t.ok(spy.calledOnce, 'watcher is fired even if the view is not selected');
+    t.ok(spy.calledOn(homeView), 'the context of the watcher is the view');
+
+    var call = spy.getCall(0);
+    t.equal(call.args[0], 'val', 'first argument is the property name');
+    t.equal(call.args[1], 42, 'second argument is the property initial value');
+    t.equal(call.args[2], 100, 'third argument is the property new value');
+    t.equal(typeof(call.args[3]), 'function', 'fourth argument is a function that allows to revert the action');
+
+    model_.destroy();
+    view.reset();
+
+  });
+
+  teardown_();
+
+  t.end();
+
+});
+
 tape('store/read private view data', function(t) { 
 
   ChromeAppManager.require(['view'], function(view) {
