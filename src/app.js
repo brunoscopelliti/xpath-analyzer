@@ -39,13 +39,16 @@ window.onload = function () {
 
             // @todo handle loading
 
+            var url = this.value;
+
             evt.preventDefault();
-            let req = xhr(this.value);
+            let req = xhr(url);
             req.then(function(res){
             
               // well, everything is fine, so just save in the model a reference
               // to the loaded xml, and select next tab
               model_.set('xml-loaded', true);
+              model_.set('xml-source', url);
               model_.set('xml', res.xml);
               model_.set('tab', view('xml-input').next);
             
@@ -74,8 +77,7 @@ window.onload = function () {
 
     view.register('xpath-analyzer', { 
       selector: '[data-tab="xpath-analyzer"]',
-      // @todo register watch, or something like this
-      watches: [model_, {'prop': 'viewMethod'}, {'?prop':'viewMethod'}],
+      watches: [model_, {'xml-source': 'clearResult'}, {'?result': 'updateResult'}],
       prev: 'xml-input',
       next: 'credits',
       get isEnabled() {
@@ -97,6 +99,12 @@ window.onload = function () {
       teardown: function() {
         var fn = view('xpath-analyzer').read('keyupFn');
         $$('#xpath')[0].removeEventListener('keyup', fn, true);
+      },
+      clearResult: function() {
+        console.log('%cTodo: implement clear result method', 'background:yellow; color:white;');
+      },
+      updateResult: function() {
+        console.log('%cTodo: implement update result method', 'background:yellow; color:white;');
       }
     });
 
