@@ -87,10 +87,10 @@ tape('create/destroy new model', function(t) {
   ChromeAppManager.require(['Model'], function(Model) {
     var appModel = new Model('test', { val: 42 });
     t.equal(appModel.get('val'), 42, 'model is created with the initial properties passed to the constructor');
-    appModel.destroy('test');
+    appModel.destroy();
     appModel = new Model('test');
     t.equal(appModel.get('val'), undefined, 'model was destroied');
-    appModel.destroy('test');
+    appModel.destroy();
   });
 
   t.end();
@@ -107,7 +107,7 @@ tape('get created model', function(t) {
   ChromeAppManager.require(['Model'], function(Model) {
     var appModel = new Model('test');
     t.equal(appModel.get('val'), 42, 'model is retrived');
-    appModel.destroy('test');
+    appModel.destroy();
   });
 
   t.end();
@@ -128,8 +128,8 @@ tape('get created model when more there are more different models', function(t) 
     t.equal(appModel.get('enabled'), true, 'the correct model is retrived');
     t.equal(siteModel.get('val'), 42, 'the correct model is retrived');
     
-    appModel.destroy('app');
-    siteModel.destroy('site');
+    appModel.destroy();
+    siteModel.destroy();
   });
 
   t.end();
@@ -147,7 +147,7 @@ tape('set model properties', function(t) {
     appModel.set('obj', {val: true});
     t.equal(appModel.get('obj').val, true, 'Model#set update the value of a property to an object');
 
-    appModel.destroy('test');
+    appModel.destroy();
   });
 
   t.end();
@@ -171,7 +171,7 @@ tape('watch model property', function(t) {
     t.equal(call.args[2], 1, 'third argument is the property new value');
     t.equal(typeof(call.args[3]), 'function', 'fourth argument is a function that allows to revert the action');
 
-    appModel.destroy('test');
+    appModel.destroy();
   });
 
   t.end();
@@ -191,7 +191,7 @@ tape('watch model property, undo', function(t) {
     t.equal(appModel.get('val'), 42 , 'property has its initial value');
     t.ok(!spy.called, 'watchers after the undo action are not executed');
 
-    appModel.destroy('test');
+    appModel.destroy();
   });
 
   t.end();
@@ -216,7 +216,7 @@ tape('unwatch model property', function(t) {
 
     t.ok(appModel.get('val') == 10 && res && !spy.called, 'unwatch deleted the handler, that isn\'t executed anymore');
 
-    appModel.destroy('test');
+    appModel.destroy();
   });
 
   ChromeAppManager.require(['Model'], function(Model) {
@@ -232,7 +232,7 @@ tape('unwatch model property', function(t) {
 
     t.ok(res && !spy1.called && !spy2.called, 'unwatch deleted all the watcher handlers of a specific model property');
 
-    appModel.destroy('test');
+    appModel.destroy();
   });
 
   t.end();
@@ -251,7 +251,7 @@ tape('watchOne model property', function(t) {
 
     t.ok(spy.calledOnce, 'watchOne set an handler that is executed only one time');
 
-    appModel.destroy('test');
+    appModel.destroy();
   });
 
   t.end();

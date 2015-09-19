@@ -76,9 +76,9 @@ ChromeAppManager.define("Model", [], function() {
     this.watch(key, fn);
   };
 
-  Model.prototype.destroy = function(key) {
+  Model.prototype.destroy = function() {
     this.dataStore = this.watchers = null;
-    return delete modelStore[key];
+    return delete modelStore[this.guid_];
   };
 
   return Model;
