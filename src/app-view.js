@@ -120,11 +120,7 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
     views_[name].guid_ = ++id;
     views_[name].data_ = {};
 
-    for (var k in config){
-      if (config.hasOwnProperty(k)){
-        Object.defineProperty(views_[name], k, Object.getOwnPropertyDescriptor(config, k));
-      }
-    }
+    loopProps(config, (val, k, original) => Object.defineProperty(views_[name], k, Object.getOwnPropertyDescriptor(original, k)))
 
 
     // @todo register watches
