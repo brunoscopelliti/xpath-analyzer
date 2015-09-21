@@ -811,6 +811,23 @@ tape('filter with bound context', function(t) {
 });
 
 
+/**
+ * module xpath-parser.js
+ */
+
+tape('module xpath-parser.js:', function(t) { t.end(); });
+
+tape('interface', function(t) { 
+
+  ChromeAppManager.require(['parser'], function(parser) {
+    t.equal(typeof parser, 'function', 'parser is a function');
+  });
+
+  t.end();
+
+});
+
+
 
 function setup_(dom) {
   document.body.innerHTML = dom;

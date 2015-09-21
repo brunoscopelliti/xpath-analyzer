@@ -18,6 +18,7 @@ module.exports = function (grunt) {
                     'src/utils/simple-xhr.js',
                     'src/utils/loop-props.js',
                     'src/utils/filter-props.js',
+                    'src/utils/xpath-parser.js',
                     'src/app-model.js',
                     'src/app-view.js',
                     'src/app.js'
@@ -31,6 +32,7 @@ module.exports = function (grunt) {
                     'src/utils/simple-xhr.js',
                     'src/utils/loop-props.js',
                     'src/utils/filter-props.js',
+                    'src/utils/xpath-parser.js',
                     'src/app-model.js',
                     'src/app-view.js'
                 ],
