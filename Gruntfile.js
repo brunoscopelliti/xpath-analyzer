@@ -103,7 +103,7 @@ module.exports = function (grunt) {
                 livereload: 35729
             },
             js: {
-                files: ['./src/*.js', './src/**/*.js', './tests/*.js'],
+                files: ['./src/*.js', './src/**/*.js', './tests/*.js', '!./tests/bundle.js'],
                 tasks: ['build-test', 'browserify:test']
             }
         }
