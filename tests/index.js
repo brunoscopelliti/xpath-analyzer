@@ -827,6 +827,122 @@ tape('interface', function(t) {
 
 });
 
+tape('evaluate count & math', function(t) { 
+
+  ChromeAppManager.require(['parser'], function(parser) {
+    
+    var xml = setupXML_();
+
+    t.equal(parser(xml, "6*7"), 42);
+    t.equal(parser(xml, "21+21"), 42);
+    t.equal(parser(xml, "84 div 2"), 42);
+    t.equal(parser(xml, "44-2"), 42);
+
+    t.equal(parser(xml, "count(//root/app)"), 1);
+    t.equal(parser(xml, "count(//root[@name='package.xml']/app)"), 1);
+    t.equal(parser(xml, "count(//root[@name='package.xml' and @version='2.0']/app)"), 1);
+    t.equal(parser(xml, "count(//root[@version='1.0']/app)"), 0);
+    t.equal(parser(xml, "count(//dep)"), 3);
+    t.equal(parser(xml, "count(//root[@name='package.xml' and contains(//author/name, 'Bruno')])"), 1);
+    t.equal(parser(xml, "count(//root[contains(//author/name, 'Batman')])"), 0);  
+
+  });
+
+  t.end();
+
+});
+
+tape('evaluate bool', function(t) { 
+
+  ChromeAppManager.require(['parser'], function(parser) {
+    
+    var xml = setupXML_();
+
+    t.equal(parser(xml, "count(//dep) > 2"), true);
+    t.equal(parser(xml, "count(//dep) < 2"), false);
+
+  });
+
+  t.end();
+
+});
+
+tape('evaluate text', function(t) { 
+
+  ChromeAppManager.require(['parser'], function(parser) {
+    
+    var xml = setupXML_();
+
+    t.equal(parser(xml, "//root/app/text()"), 'xpath-analyzer');
+    t.equal(parser(xml, "//authors/parent::*/@name"), 'package.xml');
+
+    t.equal(parser(xml, "//key[2]/text()"), 'xml');
+    
+    t.equal(parser(xml, "//dep[1]/text()"), '');
+    t.equal(parser(xml, "//dep[@name='sinon']/@version"), '1.16.1');
+    t.equal(parser(xml, "//dep[starts-with(@name,'sin')]/@version"), '1.16.1');
+
+    t.deepEqual(parser(xml, "//key/text()"), ["xpath", "xml", "xml-parser"]);
+    t.deepEqual(parser(xml, "//dep/@version"), [ { version: '0.4.5' }, { version: '1.16.1' }, { version: '4.2.0' } ]);
+    t.deepEqual(parser(xml, "//dep/@*"), [ { name: 'grunt', version: '0.4.5' }, { name: 'sinon', version: '1.16.1' }, { name: 'tape', version: '4.2.0' } ]);
+
+  });
+
+  t.end();
+
+});
+
+tape('evaluate nodes', function(t) { 
+
+  ChromeAppManager.require(['parser'], function(parser) {
+    
+    var xml = setupXML_();
+
+    t.equal(parser(xml, "//authors").nodeType, Element.ELEMENT_NODE);
+    t.equal(parser(xml, "//authors/*[@id=42]").length, 0);
+    t.equal(parser(xml, "//authors/author[1]/*").length, 3);
+
+  });
+
+  t.end();
+
+});
+
+
+
+function setupXML_(){
+
+  var parser = new DOMParser();
+  var txt = '\
+    <root name="package.xml" version="2.0">\
+      <app>xpath-analyzer</app>\
+      <version>2.0</version>\
+      <description>Evaluate xPath/XSLT expressions against the XML of the current browser tab</description>\
+      <homepage>https://chrome.google.com/webstore/detail/xpath-analyzer/abfcnmcmpfhkmhoapcplnafnecpofkci</homepage>\
+      <authors>\
+        <author id="1">\
+          <name>Bruno</name>\
+          <surname>Scopelliti</surname>\
+          <website>http://brunoscopelliti.com</website>\
+        </author>\
+      </authors>\
+      <keywords>\
+        <key id="1">xpath</key>\
+        <key id="2">xml</key>\
+        <key id="3">xml-parser</key>\
+      </keywords>\
+      <dependencies>\
+        <dep name="grunt" version="0.4.5" />\
+        <dep name="sinon" version="1.16.1" />\
+        <dep name="tape" version="4.2.0" />\
+      </dependencies>\
+    </root>';
+
+  return parser.parseFromString(txt, "text/xml");
+
+}
+
+
 
 
 function setup_(dom) {

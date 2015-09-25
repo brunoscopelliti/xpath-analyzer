@@ -83,15 +83,15 @@ window.onload = function () {
       get isEnabled() {
         return model_.get('xml-loaded');
       },
-      setup: require([], function() {
+      setup: require(['parser'], function(evaluate) {
 
         return function() {
 
-          function parseXML(evt){}
+          function evaluateXpath(evt){}
 
-          view('xpath-analyzer').store('keyupFn', parseXML);
+          view('xpath-analyzer').store('keyupFn', evaluateXpath);
 
-          $$('#xpath')[0].addEventListener('keyup', fn, true);
+          $$('#xpath')[0].addEventListener('keyup', evaluateXpath, true);
 
         };
 
