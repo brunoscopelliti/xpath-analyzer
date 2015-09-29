@@ -14,6 +14,7 @@ module.exports = function (grunt) {
             app: {
                 src: [
                     'src/app-manager.js',
+                    'src/utils/messanger.js',
                     'src/utils/simple-delegation.js',
                     'src/utils/simple-xhr.js',
                     'src/utils/loop-props.js',
@@ -28,6 +29,7 @@ module.exports = function (grunt) {
             applight: {
                 src: [
                     'src/app-manager.js',
+                    'src/utils/messanger.js',
                     'src/utils/simple-delegation.js',
                     'src/utils/simple-xhr.js',
                     'src/utils/loop-props.js',
@@ -59,6 +61,10 @@ module.exports = function (grunt) {
             appjs: {
                 src: './dist/app.js',
                 dest: './app/app.js'
+            },
+            logger: {
+                src: './src/injected-scripts/logger.js',
+                dest: './app/logger.js'
             }
         },
 
@@ -111,7 +117,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('dev', ['watch:js']);
     grunt.registerTask('build-test', ['concat:applight']);
-    grunt.registerTask('build-prod', ['concat:app', /*'uglify:js', */ 'copy:appjs']);
+    grunt.registerTask('build-prod', ['concat:app', /*'uglify:js', */ 'copy']);
 
     grunt.registerTask('test', ['build-test', 'browserify:test', 'connect:test']);
 

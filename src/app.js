@@ -37,11 +37,13 @@ window.onload = function () {
               return;
             }
 
+            evt.preventDefault();
+
             // @todo handle loading
 
             var url = this.value;
 
-            evt.preventDefault();
+            
             let req = xhr(url);
             req.then(function(res){
             
@@ -66,6 +68,8 @@ window.onload = function () {
 
           $$('#url')[0].addEventListener('keyup', getXML, true);
 
+          $$('#url')[0].focus();
+
         };
 
       }),
@@ -84,15 +88,18 @@ window.onload = function () {
         return model_.get('xml-loaded');
       },
       setup: require(['parser'], function(evaluate) {
-
         return function() {
-
-          function evaluateXpath(evt){}
-
+          function evaluateXpath(evt){
+            if (evt.which != ENTER_KEYCODE){
+              return;
+            }
+            evt.preventDefault();
+            model_.set('latest-xpath', evt.currentTarget.value);
+            model_.set('result', evaluate(model_.get('xml'), evt.currentTarget.value));
+          }
           view('xpath-analyzer').store('keyupFn', evaluateXpath);
-
           $$('#xpath')[0].addEventListener('keyup', evaluateXpath, true);
-
+          setTimeout(function() { $$('#xpath')[0].focus(); }, 250);
         };
 
       }),
@@ -101,11 +108,30 @@ window.onload = function () {
         $$('#xpath')[0].removeEventListener('keyup', fn, true);
       },
       clearResult: function() {
-        console.log('%cTodo: implement clear result method', 'background:yellow; color:white;');
+        $$('#result')[0].classList.add('hidden');
       },
-      updateResult: function() {
-        console.log('%cTodo: implement update result method', 'background:yellow; color:white;');
-      }
+      updateResult: require(['messanger'], function(log) {
+
+        return function(prop, prevVal, currVal) {
+          var resultBox = $$('#result')[0];
+          var latestQuery = model_.get('latest-xpath');
+
+
+          // @todo handle empty result
+
+          $$('[data-xpath]')[0].textContent = latestQuery;
+          $$('[data-result]')[0].textContent = ['boolean', 'number', 'string'].indexOf(typeof(currVal)) >= 0 ? currVal : 'Check Chrome Developer console.';
+          
+
+          // @todo improve logging
+
+          log('Result for: %c'+latestQuery, 'info');
+          log(currVal, 'xml');
+
+          resultBox.classList.remove('hidden');
+        };
+
+      })
     });
 
     view.register('credits', { 

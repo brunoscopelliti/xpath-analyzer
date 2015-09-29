@@ -14,6 +14,10 @@
         width: 360px;
       }
 
+      .hidden {
+        display: none !important;
+      }
+
       #slide-container {
         display: flex;
         position: absolute;
@@ -97,7 +101,12 @@
         <section class="tab" data-tab="xpath-analyzer" style="background: yellow;">
           <label for="xpath">The xPath you want to evaluate</label>
           <input type="text" name="xpath" id="xpath" autocapitalize="off" placeholder="Type the xpath command, then press ENTER"/>
-          <div id="result"></div>
+          <div id="result">
+            <p>Result for: <b data-xpath></b></p>
+            <code data-result>
+              
+            </code>
+          </div>
         </section>
 
         <section class="tab" data-tab="credits" style="background: red;">
