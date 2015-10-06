@@ -14,6 +14,7 @@ module.exports = function (grunt) {
             app: {
                 src: [
                     'src/app-manager.js',
+                    'src/utils/is-xml.js',
                     'src/utils/messanger.js',
                     'src/utils/simple-delegation.js',
                     'src/utils/simple-xhr.js',
@@ -29,6 +30,7 @@ module.exports = function (grunt) {
             applight: {
                 src: [
                     'src/app-manager.js',
+                    'src/utils/is-xml.js',
                     'src/utils/messanger.js',
                     'src/utils/simple-delegation.js',
                     'src/utils/simple-xhr.js',
