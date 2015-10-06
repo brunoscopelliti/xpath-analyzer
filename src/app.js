@@ -59,7 +59,7 @@ window.onload = function () {
             }).catch(function(err){
 
               // @todo handle error
-              console.log("fail:",err);
+              console.log('fail:',err);
 
             });
           }

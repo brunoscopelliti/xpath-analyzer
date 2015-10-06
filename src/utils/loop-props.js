@@ -4,9 +4,9 @@
  * usage: loopProps({ a:1, b: 2}, function() { ... });
  */
 
-ChromeAppManager.define("loopProps", [], function() {
+ChromeAppManager.define('loopProps', [], function() {
 
-  "use strict";
+  'use strict';
 
   return function loopProps(targetObj, iterator, context){
     context = context || this;

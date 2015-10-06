@@ -10,7 +10,7 @@ ChromeAppManager.define('isXML', [], function() {
 
   return function isXML(subject){
     var documentElement = (subject ? subject.ownerDocument || subject : 0).documentElement;
-    return documentElement ? documentElement.nodeName !== "HTML" : false;
+    return documentElement ? documentElement.nodeName !== 'HTML' : false;
   };
 
 });

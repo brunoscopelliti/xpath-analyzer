@@ -1,7 +1,7 @@
 
 var ChromeAppManager = (function() {
 
-  "use strict";
+  'use strict';
 
   var store_ = [];
 

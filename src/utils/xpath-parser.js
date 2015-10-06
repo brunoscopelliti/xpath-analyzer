@@ -3,9 +3,9 @@
  * Evaluates xpath expression against the given XML document
  */
 
-ChromeAppManager.define("parser", [], function() {
+ChromeAppManager.define('parser', [], function() {
 
-  "use strict";
+  'use strict';
 
 
   function* resultGenerator(results){
@@ -70,7 +70,7 @@ ChromeAppManager.define("parser", [], function() {
   function normalize_(data){
 
     if (data.length == 0){
-      return "";
+      return '';
     }
 
     if (data.length == 1){

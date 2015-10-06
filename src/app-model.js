@@ -1,10 +1,10 @@
 
-ChromeAppManager.define("Model", [], function() {
+ChromeAppManager.define('Model', [], function() {
 
-  "use strict";
+  'use strict';
 
   var id = -1;
-  var one_ = Symbol("one");
+  var one_ = Symbol('one');
 
   const modelStore = {};
 
@@ -57,7 +57,7 @@ ChromeAppManager.define("Model", [], function() {
   };
 
   Model.prototype.unwatch = function(key, fn){
-    if (typeof this.watchers[key] == "undefined" || this.watchers[key].length == 0){
+    if (typeof this.watchers[key] == 'undefined' || this.watchers[key].length == 0){
       return false;
     }
     if (fn == null){

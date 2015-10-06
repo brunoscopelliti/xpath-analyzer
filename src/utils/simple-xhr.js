@@ -4,9 +4,9 @@
  * usage: xhr(url).then(function() { .. }).catch(function() { .. })
  */
  
-ChromeAppManager.define("xhr", [], function() {
+ChromeAppManager.define('xhr', [], function() {
 
-  "use strict";
+  'use strict';
 
   return function xhr(url){
 

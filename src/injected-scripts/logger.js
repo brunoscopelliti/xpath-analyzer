@@ -19,7 +19,7 @@ if (!chrome.runtime.onMessage.hasListeners()) {
     }
     else if (obj.type == 'xml') {
       // parse XML response
-      let xml = parser.parseFromString(obj.message, "text/xml");
+      let xml = parser.parseFromString(obj.message, 'text/xml');
       console.log(xml.children[0]);
     }
     else if (typeof console[obj.type] == 'function'){

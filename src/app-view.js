@@ -1,7 +1,7 @@
 
 ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps, filterProps) {
 
-  "use strict";
+  'use strict';
 
   function ViewConfigError(msg) {
     this.name = 'ViewConfigError';

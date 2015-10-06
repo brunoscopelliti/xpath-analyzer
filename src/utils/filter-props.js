@@ -4,9 +4,9 @@
  * usage: filter({ a:{ f: true }, b: { f: false } }, x => x.f)
  */
 
-ChromeAppManager.define("filterProps", ['loopProps'], function(loopProps) {
+ChromeAppManager.define('filterProps', ['loopProps'], function(loopProps) {
 
-  "use strict";
+  'use strict';
 
   return function filterProps(targetObj, predicate, context){
     var res = [];
