@@ -30,6 +30,8 @@ window.onload = function () {
       isSelected: true,
       setup: require(['xhr'], function(xhr) {
 
+        // @todo most wanted: memorize latest searched end point
+
         return function() {
 
           function getXML(evt){
@@ -116,17 +118,21 @@ window.onload = function () {
           var resultBox = $$('#result')[0];
           var latestQuery = model_.get('latest-xpath');
 
+          var isPrimitiveResult = ['boolean', 'number', 'string'].indexOf(typeof(currVal)) >= 0;
+          
 
           // @todo handle empty result
 
           $$('[data-xpath]')[0].textContent = latestQuery;
-          $$('[data-result]')[0].textContent = ['boolean', 'number', 'string'].indexOf(typeof(currVal)) >= 0 ? currVal : 'Check Chrome Developer console.';
+          $$('[data-result]')[0].textContent = isPrimitiveResult ? currVal : 'Check Chrome Developer console.';
           
 
           // @todo improve logging
 
-          log('Result for: %c'+latestQuery, 'info');
-          log(currVal, 'xml');
+          if (!isPrimitiveResult){
+            log('Result for: %c'+latestQuery, 'info');
+            log(currVal, 'xml');
+          }
 
           resultBox.classList.remove('hidden');
         };

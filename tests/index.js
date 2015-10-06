@@ -812,6 +812,39 @@ tape('filter with bound context', function(t) {
 
 
 /**
+ * module is-xml.js
+ */
+
+tape('module is-xml.js:', function(t) { t.end(); });
+
+tape('interface', function(t) { 
+
+  ChromeAppManager.require(['isXML'], function(isXML) {
+    t.equal(typeof isXML, 'function', 'isXML is a function');
+  });
+
+  t.end();
+
+});
+
+tape('isXML return true for xml docs', function(t) { 
+
+  ChromeAppManager.require(['isXML'], function(isXML) {
+  
+    t.equal(isXML(true), false, 'boolean');
+    t.equal(isXML(42), false, 'number');
+    t.equal(isXML("a"), false, 'string');
+    t.equal(isXML({ v: 42 }), false, 'object');
+    t.equal(isXML(setupXML_()), true, 'xml');
+
+  });
+
+  t.end();
+
+});
+
+
+/**
  * module xpath-parser.js
  */
 
