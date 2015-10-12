@@ -85,6 +85,95 @@
         width: 4px;
       }
 
+
+
+
+
+
+/*
+<div class="loader">
+   <span></span>
+   <span></span>
+</div>
+*/
+
+
+html, body {
+  background: #222;
+}
+
+.loader {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -32px;
+  margin-top: -32px;
+  display: block;
+  width: 64px;
+  height: 64px;
+  animation: 1s spin infinite cubic-bezier(0.255, 0.2, 0.315, 0.455);
+  transform-origin: 50% 50%;
+  opacity: 0.8;
+}
+.loader span, .loader span:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 64px;
+  overflow: hidden;
+  box-sizing: border-box;
+  transform-origin: 100% 50%;
+  border-top-left-radius: 32px;
+  border-bottom-left-radius: 32px;
+}
+.loader span:before {
+  content: "";
+  border: 5px solid #fff;
+  border-right-color: transparent;
+  animation: 4s mask infinite linear;
+}
+.loader span:nth-child(1) {
+  transform: rotate(180deg);
+}
+.loader span:nth-child(2) {
+  transform: rotate(360deg);
+}
+.loader span:nth-child(2):before {
+  animation-delay: 1s;
+}
+
+
+
+@keyframes mask {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(180deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+
+
+
     </style>
   </head>
   <body>

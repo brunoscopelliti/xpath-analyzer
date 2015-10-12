@@ -11,11 +11,8 @@ window.onload = function () {
     const RIGHT_ARROW_KEYCODE = 39;
     const ENTER_KEYCODE = 13;
 
-    
 
     var $$ = document.querySelectorAll.bind(document);
-
-    
 
     // setup the app model
     // with model name 'xapp'
@@ -34,6 +31,9 @@ window.onload = function () {
 
         return function() {
 
+          var urlField = $$('#url')[0];
+          var latestSource = localStorage.getItem("latest-xml-source");
+
           function getXML(evt){
             if (evt.which != ENTER_KEYCODE){
               return;
@@ -43,12 +43,14 @@ window.onload = function () {
 
             // @todo handle loading
 
-            var url = this.value;
-
-            
+            let url = this.value;
             let req = xhr(url);
+            
             req.then(function(res){
             
+              // save in the local storage the latest successfully loaded xml
+              localStorage.setItem('latest-xml-source', url);
+
               // well, everything is fine, so just save in the model a reference
               // to the loaded xml, and select next tab
               model_.set('xml-loaded', true);
@@ -68,9 +70,13 @@ window.onload = function () {
           // so that then the teardown method can retrieve a reference, and remove the listener
           view('xml-input').store('keyupFn', getXML);
 
-          $$('#url')[0].addEventListener('keyup', getXML, true);
+          urlField.addEventListener('keyup', getXML, true);
 
-          $$('#url')[0].focus();
+          if (latestSource){
+            urlField.value = latestSource;
+          }
+
+          urlField.focus();
 
         };
 
@@ -144,7 +150,6 @@ window.onload = function () {
       selector: '[data-tab="credits"]',
       prev: 'xpath-analyzer'
     });
-    
 
 
     // when the selected tab changes
@@ -164,15 +169,18 @@ window.onload = function () {
       if ([LEFT_ARROW_KEYCODE, RIGHT_ARROW_KEYCODE].indexOf(evt.which)<0){
         return;
       }
+      if (document.activeElement.tagName.toLowerCase() == 'input'){
+        return;
+      }
       evt.preventDefault();
       let viewName = evt.which == LEFT_ARROW_KEYCODE ? view(':selected').prev : view(':selected').next;
       if (viewName){
-        model_.set('tab', viewName);  
+        model_.set('tab', viewName);
       }
     });
 
 
-    $$('#nav')[0].addEventListener('click', delegate('.dot', function(evt) {  
+    $$('#nav')[0].addEventListener('click', delegate('.dot', function(evt) {
       model_.set('tab', this.dataset.tabBtn);
     }));
 

@@ -113,6 +113,10 @@ module.exports = function (grunt) {
             js: {
                 files: ['./src/*.js', './src/**/*.js', './tests/*.js', '!./tests/bundle.js'],
                 tasks: ['build-test', 'browserify:test']
+            },
+            prod: {
+                files: ['./src/*.js', './src/**/*.js'],
+                tasks: ['build-prod']
             }
         }
     });
