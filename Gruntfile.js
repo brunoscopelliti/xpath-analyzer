@@ -1,14 +1,19 @@
 module.exports = function (grunt) {
 
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-browserify');
+    require('load-grunt-tasks')(grunt);
 
     grunt.initConfig({
+
+        browserify: {
+            test: {
+                files: {
+                    'tests/bundle.js': ['tests/index.js']
+                },
+                options: {
+                    debug: true
+                }
+            }
+        },
 
         concat: {
             app: {
@@ -78,13 +83,14 @@ module.exports = function (grunt) {
             all: ['./src/*.js']
         },
 
-        browserify: {
-            test: {
+        sass: {
+            options: {
+                style: 'compressed',
+                sourcemap: 'none'
+            },
+            dist: {
                 files: {
-                    'tests/bundle.js': ['tests/index.js']
-                },
-                options: {
-                    debug: true
+                    'app/main.css': 'style/main.scss'
                 }
             }
         },
