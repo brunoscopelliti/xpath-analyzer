@@ -27,12 +27,18 @@ window.onload = function () {
       isSelected: true,
       setup: require(['xhr'], function(xhr) {
 
-        // @todo most wanted: memorize latest searched end point
-
         return function() {
 
           var urlField = $$('#url')[0];
           var latestSource = localStorage.getItem("latest-xml-source");
+
+          function toggleLoader(isLoading){
+            var box = view('xml-input').el;
+            if (isLoading){
+              return box.classList.add('is-loading');
+            }
+            return box.classList.remove('is-loading');
+          }
 
           function getXML(evt){
             if (evt.which != ENTER_KEYCODE){
@@ -41,7 +47,9 @@ window.onload = function () {
 
             evt.preventDefault();
 
-            // @todo handle loading
+            toggleLoader(true);
+
+            view('xml-input').el.classList.add('is-loading');
 
             let url = this.value;
             let req = xhr(url);
@@ -57,8 +65,12 @@ window.onload = function () {
               model_.set('xml-source', url);
               model_.set('xml', res.xml);
               model_.set('tab', view('xml-input').next);
+
+              toggleLoader();
             
             }).catch(function(err){
+
+              toggleLoader();
 
               // @todo handle error
               console.log('fail:',err);
