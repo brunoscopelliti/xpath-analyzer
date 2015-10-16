@@ -1,0 +1,33 @@
+
+.dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.dot {
+  background: #ddd;
+  border: 1px solid #fff;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-block;
+  height: 10px;
+  margin: 0 2px;
+  text-align: center;
+  width: 10px;
+
+  &.selected{
+    border: 1px solid #333;
+
+    span {
+      background: #333;
+      border-radius: 10px;
+      display: block;
+      height: 4px;
+      margin: 3px auto;
+      width: 4px;
+    }
+
+  }
+
+}

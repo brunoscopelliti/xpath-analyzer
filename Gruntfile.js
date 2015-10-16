@@ -116,6 +116,10 @@ module.exports = function (grunt) {
             options: {
                 livereload: 35729
             },
+            css: {
+                files: ['style/main.scss', 'style/**/*.scss'],
+                tasks: ['sass:dist']
+            },
             js: {
                 files: ['./src/*.js', './src/**/*.js', './tests/*.js', '!./tests/bundle.js'],
                 tasks: ['build-test', 'browserify:test']

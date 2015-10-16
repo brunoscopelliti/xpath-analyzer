@@ -1,4 +1,37 @@
 
+@import 'partials/vars';
+@import 'partials/font';
+
 .hidden {
   display: none !important;
 }
+
+@import 'partials/loader';
+
+body {
+  border: 1px solid #333;
+  font-family: $font;
+  font-size: 16px;
+  margin: 0;
+  padding: 5px;
+  width: 360px;
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: normal;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+input {
+  box-sizing: border-box;
+  padding: 5px;
+  width: 100%;
+}
+
+@import 'partials/slider';
+@import 'partials/nav';

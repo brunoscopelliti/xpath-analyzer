@@ -2,179 +2,9 @@
 <html>
   <head>
     <title>xPath Analyzer</title>
-    <link href='http://fonts.googleapis.com/css?family=Muli' rel='stylesheet' type='text/css'>
-    <style>
-      body {
-        border: 1px solid red;
-
-        font-family: "Trebuchet MS";
-        font-size: 16px;
-        margin: 0;
-        padding: 5px;
-        width: 360px;
-      }
-
-      .hidden {
-        display: none !important;
-      }
-
-      #slide-container {
-        display: flex;
-        position: absolute;
-        left: 0;
-        width: 1080px;
-        transition: left .5s ease-in-out;
-      }
-
-      #slide-container.view1 { left: 0px; }
-      #slide-container.view2 { left: -360px; }
-      #slide-container.view3 { left: -720px; }
-
-      main.mask,
-      section.tab {
-        min-height: 120px;
-        overflow: hidden;
-        position: relative;
-        width: 360px;
-      }
-
-      h1 {
-        font-size: 20px;
-        font-weight: normal;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 6px;
-      }
-
-      input {
-        box-sizing: border-box;
-        padding: 5px;
-        width: 100%;
-      }
-
-      .dots {
-        display: flex;
-        justify-content: center;
-        margin-top: 10px;
-      }
-
-      .dot {
-        background: #ddd;
-        border: 1px solid #fff;
-        border-radius: 10px;
-        cursor: pointer;
-        display: inline-block;
-        height: 10px;
-        margin: 0 2px;
-        text-align: center;
-        width: 10px;
-      }
-
-      .dot.selected{
-        border: 1px solid #333;
-      }
-
-      .dot.selected span {
-        background: #333;
-        border-radius: 10px;
-        display: block;
-        height: 4px;
-        margin: 3px auto;
-        width: 4px;
-      }
+    <link href="main.css" rel="stylesheet" type="text/css">
 
 
-
-
-
-
-/*
-<div class="loader">
-   <span></span>
-   <span></span>
-</div>
-*/
-
-
-html, body {
-  background: #222;
-}
-
-.loader {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-left: -32px;
-  margin-top: -32px;
-  display: block;
-  width: 64px;
-  height: 64px;
-  animation: 1s spin infinite cubic-bezier(0.255, 0.2, 0.315, 0.455);
-  transform-origin: 50% 50%;
-  opacity: 0.8;
-}
-.loader span, .loader span:before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 32px;
-  height: 64px;
-  overflow: hidden;
-  box-sizing: border-box;
-  transform-origin: 100% 50%;
-  border-top-left-radius: 32px;
-  border-bottom-left-radius: 32px;
-}
-.loader span:before {
-  content: "";
-  border: 5px solid #fff;
-  border-right-color: transparent;
-  animation: 4s mask infinite linear;
-}
-.loader span:nth-child(1) {
-  transform: rotate(180deg);
-}
-.loader span:nth-child(2) {
-  transform: rotate(360deg);
-}
-.loader span:nth-child(2):before {
-  animation-delay: 1s;
-}
-
-
-
-@keyframes mask {
-  0% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(180deg);
-  }
-  50% {
-    transform: rotate(180deg);
-  }
-  75% {
-    transform: rotate(360deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(359deg);
-  }
-}
-
-
-
-    </style>
   </head>
   <body>
     
@@ -182,23 +12,25 @@ html, body {
 
     <main class="mask">
       <div id="slide-container">
-        <section class="tab" data-tab="xml-input" style="background: green;">
+        <section class="tab" data-tab="xml-input">
+          <div class="loader">
+            <span></span>
+            <span></span>
+          </div>
           <label for="url">The url of the XML resource</label>
           <input type="url" name="url" id="url" autocapitalize="off" placeholder="Type the service's url, then press ENTER"/>
         </section>
         
-        <section class="tab" data-tab="xpath-analyzer" style="background: yellow;">
+        <section class="tab" data-tab="xpath-analyzer">
           <label for="xpath">The xPath you want to evaluate</label>
           <input type="text" name="xpath" id="xpath" autocapitalize="off" placeholder="Type the xpath command, then press ENTER"/>
           <div id="result">
             <p>Result for: <b data-xpath></b></p>
-            <code data-result>
-              
-            </code>
+            <code data-result></code>
           </div>
         </section>
 
-        <section class="tab" data-tab="credits" style="background: red;">
+        <section class="tab" data-tab="credits">
           <p>@brunoscopelliti</p>
         </section>
       </div>

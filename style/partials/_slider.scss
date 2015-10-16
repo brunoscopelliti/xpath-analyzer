@@ -1,0 +1,28 @@
+
+#slide-container {
+  display: flex;
+  position: absolute;
+  left: 0;
+  width: 1080px;
+  transition: left .5s ease-in-out;
+
+  &.view1 {
+    left: 0px;
+  }
+
+  &.view2 {
+    left: -360px;
+  }
+  
+  &.view3 {
+    left: -720px;
+  }
+}
+
+main.mask,
+section.tab {
+  min-height: 120px;
+  overflow: hidden;
+  position: relative;
+  width: 360px;
+}
