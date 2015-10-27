@@ -21,6 +21,13 @@ window.onload = function () {
 
     // register the views
 
+
+    /*
+     * xml-input
+     * from this view the user define the url to fetch in order
+     * to get an XML document, against which the xPath expressions
+     * will be evaluated.
+     */
     view.register('xml-input', {
       selector: '[data-tab="xml-input"]',
       next: 'xpath-analyzer',
@@ -47,14 +54,16 @@ window.onload = function () {
 
             evt.preventDefault();
 
+            let errorBox = $$('[data-fetch-error]')[0];
+            errorBox.classList.add('hidden');
+
             toggleLoader(true);
 
             view('xml-input').el.classList.add('is-loading');
 
             let url = this.value && this.value.startsWith('http') ? this.value : 'http://' + this.value;
-            let req = xhr(url);
 
-            req.then(function(res){
+            xhr(url).then(function(res){
 
               // save in the local storage the latest successfully loaded xml
               localStorage.setItem('latest-xml-source', url);
@@ -70,13 +79,10 @@ window.onload = function () {
 
             }).catch(function(err){
 
+              errorBox.textContent = err.status == 404 ? 'The requested resource cannot be found.' : err.message;
+              errorBox.classList.remove('hidden');
+
               toggleLoader();
-
-              $$('[data-url-field]')[0]
-
-              // @todo handle error
-              console.log('fail:',err);
-              debugger;
 
             });
           }
@@ -102,6 +108,11 @@ window.onload = function () {
       }
     });
 
+
+    /*
+     * xpath-analyzer
+     * ...
+     */
     view.register('xpath-analyzer', {
       selector: '[data-tab="xpath-analyzer"]',
       watches: [model_, {'xml-source': 'clearResult'}, {'?result': 'updateResult'}],
@@ -111,7 +122,9 @@ window.onload = function () {
         return model_.get('xml-loaded');
       },
       setup: require(['parser'], function(evaluate) {
+
         return function() {
+
           function evaluateXpath(evt){
             if (evt.which != ENTER_KEYCODE){
               return;
@@ -120,6 +133,7 @@ window.onload = function () {
             model_.set('latest-xpath', evt.currentTarget.value);
             model_.set('result', evaluate(model_.get('xml'), evt.currentTarget.value));
           }
+
           view('xpath-analyzer').store('keyupFn', evaluateXpath);
           $$('[data-xpath-field]')[0].addEventListener('keyup', evaluateXpath, true);
           setTimeout(function() { $$('[data-xpath-field]')[0].focus(); }, 250);

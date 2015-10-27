@@ -4,7 +4,7 @@
  * usage: xhr(url).then(function() { .. }).catch(function() { .. })
  */
 
-ChromeAppManager.define('xhr', [], function() {
+ChromeAppManager.define('xhr', ['isXML'], function(isXML) {
 
   'use strict';
 
@@ -17,7 +17,10 @@ ChromeAppManager.define('xhr', [], function() {
       req.onreadystatechange = function(evt) {
         if (req.readyState==4) {
           if (req.status==200){
-            return res({ status: req.status, xml: req.responseXML });
+            if (req.responseXML && isXML(req.responseXML)){
+              return res({ status: req.status, xml: req.responseXML });
+            }
+            return rej({ status: 400, message: 'Invalid XML' });
           }
           return rej({ status: req.status, message: req.statusText});
         }

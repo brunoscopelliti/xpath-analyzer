@@ -6,11 +6,21 @@
   display: none !important;
 }
 
+.error {
+  background-color: $bg-error;
+  color: $text-error;
+  padding: 15px 10px;
+}
+
+.small {
+  font-size: $small-text;
+}
+
 @import 'partials/loader';
 
 body {
   font-family: $font;
-  font-size: 16px;
+  font-size: $normal-text;
   margin: 0;
   padding: 5px;
   width: 360px;

@@ -1,9 +1,9 @@
 
 /**
- * S
- * usage: ...
+ * Send a message with the result of the xpath evaluation
+ * to the logger.js script that was injected into the page.
  */
- 
+
 ChromeAppManager.define('messanger', ['isXML'], function(isXML) {
 
   'use strict';
