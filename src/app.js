@@ -188,7 +188,11 @@ window.onload = function () {
     });
 
     function show(view){
+      // make the container slide on the right section
       $$('[data-container]')[0].className = 'view'+view.guid_;
+      // ... and update the dots on the bottom
+      $$('[data-nav] .dot.selected')[0].classList.remove('selected');
+      $$(`[data-nav] [data-tab-btn=${view.name}]`)[0].classList.add('selected');
     }
 
 
