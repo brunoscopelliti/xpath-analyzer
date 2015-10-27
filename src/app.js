@@ -29,7 +29,7 @@ window.onload = function () {
 
         return function() {
 
-          var urlField = $$('#url')[0];
+          var urlField = $$('[data-url-field]')[0];
           var latestSource = localStorage.getItem("latest-xml-source");
 
           function toggleLoader(isLoading){
@@ -51,11 +51,11 @@ window.onload = function () {
 
             view('xml-input').el.classList.add('is-loading');
 
-            let url = this.value;
+            let url = this.value && this.value.startsWith('http') ? this.value : 'http://' + this.value;
             let req = xhr(url);
-            
+
             req.then(function(res){
-            
+
               // save in the local storage the latest successfully loaded xml
               localStorage.setItem('latest-xml-source', url);
 
@@ -67,13 +67,16 @@ window.onload = function () {
               model_.set('tab', view('xml-input').next);
 
               toggleLoader();
-            
+
             }).catch(function(err){
 
               toggleLoader();
 
+              $$('[data-url-field]')[0]
+
               // @todo handle error
               console.log('fail:',err);
+              debugger;
 
             });
           }
@@ -95,11 +98,11 @@ window.onload = function () {
       }),
       teardown: function() {
         var fn = this.read('keyupFn');
-        $$('#url')[0].removeEventListener('keyup', fn, true);
+        $$('[data-url-field]')[0].removeEventListener('keyup', fn, true);
       }
     });
 
-    view.register('xpath-analyzer', { 
+    view.register('xpath-analyzer', {
       selector: '[data-tab="xpath-analyzer"]',
       watches: [model_, {'xml-source': 'clearResult'}, {'?result': 'updateResult'}],
       prev: 'xml-input',
@@ -118,32 +121,32 @@ window.onload = function () {
             model_.set('result', evaluate(model_.get('xml'), evt.currentTarget.value));
           }
           view('xpath-analyzer').store('keyupFn', evaluateXpath);
-          $$('#xpath')[0].addEventListener('keyup', evaluateXpath, true);
-          setTimeout(function() { $$('#xpath')[0].focus(); }, 250);
+          $$('[data-xpath-field]')[0].addEventListener('keyup', evaluateXpath, true);
+          setTimeout(function() { $$('[data-xpath-field]')[0].focus(); }, 250);
         };
 
       }),
       teardown: function() {
         var fn = view('xpath-analyzer').read('keyupFn');
-        $$('#xpath')[0].removeEventListener('keyup', fn, true);
+        $$('[data-xpath-field]')[0].removeEventListener('keyup', fn, true);
       },
       clearResult: function() {
-        $$('#result')[0].classList.add('hidden');
+        $$('[data-result]')[0].classList.add('hidden');
       },
       updateResult: require(['messanger'], function(log) {
 
         return function(prop, prevVal, currVal) {
-          var resultBox = $$('#result')[0];
+          var resultBox = $$('[data-result]')[0];
           var latestQuery = model_.get('latest-xpath');
 
           var isPrimitiveResult = ['boolean', 'number', 'string'].indexOf(typeof(currVal)) >= 0;
-          
+
 
           // @todo handle empty result
 
-          $$('[data-xpath]')[0].textContent = latestQuery;
-          $$('[data-result]')[0].textContent = isPrimitiveResult ? currVal : 'Check Chrome Developer console.';
-          
+          $$('[data-result-query]')[0].textContent = latestQuery;
+          $$('[data-result-value]')[0].textContent = isPrimitiveResult ? currVal : 'Check Chrome Developer console.';
+
 
           // @todo improve logging
 
@@ -158,7 +161,7 @@ window.onload = function () {
       })
     });
 
-    view.register('credits', { 
+    view.register('credits', {
       selector: '[data-tab="credits"]',
       prev: 'xpath-analyzer'
     });
@@ -171,7 +174,7 @@ window.onload = function () {
     });
 
     function show(view){
-      $$('#slide-container')[0].className = 'view'+view.guid_;
+      $$('[data-container]')[0].className = 'view'+view.guid_;
     }
 
 
@@ -192,7 +195,7 @@ window.onload = function () {
     });
 
 
-    $$('#nav')[0].addEventListener('click', delegate('.dot', function(evt) {
+    $$('[data-nav]')[0].addEventListener('click', delegate('.dot', function(evt) {
       model_.set('tab', this.dataset.tabBtn);
     }));
 

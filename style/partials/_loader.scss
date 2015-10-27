@@ -12,7 +12,7 @@
   transform-origin: 50% 50%;
   opacity: 0.8;
 
-  span, 
+  span,
   span:before {
     position: absolute;
     top: 0;
@@ -36,19 +36,23 @@
   span:nth-child(1) {
     transform: rotate(180deg);
   }
-  
-  span:nth-child(2) { 
-    transform: rotate(360deg); 
+
+  span:nth-child(2) {
+    transform: rotate(360deg);
   }
-  
+
   span:nth-child(2):before {
-    animation-delay: 1s; 
+    animation-delay: 1s;
   }
 }
 
 .is-loading {
-  background: #333;
+  background: #555;
   opacity: .75;
+
+  input {
+    opacity: .5;
+  }
 
   .loader {
     display: block;
@@ -56,29 +60,29 @@
 }
 
 
-@keyframes mask { 
+@keyframes mask {
   0% {
-    transform: rotate(0deg); 
+    transform: rotate(0deg);
   }
   25% {
-    transform: rotate(180deg); 
+    transform: rotate(180deg);
   }
   50% {
-    transform: rotate(180deg); 
+    transform: rotate(180deg);
   }
   75% {
-    transform: rotate(360deg); 
+    transform: rotate(360deg);
   }
   100% {
-    transform: rotate(360deg); 
+    transform: rotate(360deg);
   }
 }
 
-@keyframes spin { 
+@keyframes spin {
   0% {
-    transform: rotate(0deg); 
+    transform: rotate(0deg);
   }
   100% {
-    transform: rotate(359deg); 
+    transform: rotate(359deg);
   }
 }

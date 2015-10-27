@@ -3,7 +3,7 @@
  * A simple wrapper to handle xhr GET requests
  * usage: xhr(url).then(function() { .. }).catch(function() { .. })
  */
- 
+
 ChromeAppManager.define('xhr', [], function() {
 
   'use strict';
@@ -19,7 +19,7 @@ ChromeAppManager.define('xhr', [], function() {
           if (req.status==200){
             return res({ status: req.status, xml: req.responseXML });
           }
-          return rej(req.status);
+          return rej({ status: req.status, message: req.statusText});
         }
       };
 
