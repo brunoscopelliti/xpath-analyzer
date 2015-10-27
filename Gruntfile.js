@@ -133,7 +133,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('dev', ['watch:js']);
     grunt.registerTask('build-test', ['concat:applight']);
-    grunt.registerTask('build-prod', ['concat:app', /*'uglify:js', */ 'copy']);
+    grunt.registerTask('build-prod', ['sass:dist', 'concat:app', /*'uglify:js', */ 'copy']);
 
     grunt.registerTask('test', ['build-test', 'browserify:test', 'connect:test']);
 
