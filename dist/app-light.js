@@ -1,7 +1,7 @@
 
 var ChromeAppManager = (function() {
 
-  "use strict";
+  'use strict';
 
   var store_ = [];
 
@@ -27,17 +27,43 @@ var ChromeAppManager = (function() {
 
 
 /**
- * S
- * usage: ...
+ * A simple helper function to check if an object is an XML document
+ * usage: isXML(subject);
  */
- 
-ChromeAppManager.define("messanger", [], function() {
 
-  "use strict";
+ChromeAppManager.define('isXML', [], function() {
+
+  'use strict';
+
+  return function isXML(subject){
+    var documentElement = (subject ? subject.ownerDocument || subject : 0).documentElement;
+    return documentElement ? documentElement.nodeName !== 'HTML' : false;
+  };
+
+});
+
+/**
+ * Send a message with the result of the xpath evaluation
+ * to the logger.js script that was injected into the page.
+ */
+
+ChromeAppManager.define('messanger', ['isXML'], function(isXML) {
+
+  'use strict';
+
+  var serializer = new XMLSerializer();
 
   return function send(message, type){
     chrome.tabs.getSelected(null, function (tab) {
       chrome.tabs.executeScript(null, {file: './logger.js'}, function () {
+        if (type == 'xml'){
+          if (isXML(message)){
+            message = serializer.serializeToString(message);
+          }
+          else {
+            type = 'table';
+          }
+        }
         chrome.tabs.sendMessage(tab.id, JSON.stringify({ message, type }));
       });
     });
@@ -48,12 +74,12 @@ ChromeAppManager.define("messanger", [], function() {
 
 /**
  * A simple wrapper to handle event delegation
- * usage: el.addEventListener("click", delegate(".elem", function(evt) { ... });
+ * usage: el.addEventListener('click', delegate('.elem, function(evt) { ... });
  */
  
-ChromeAppManager.define("delegate", [], function() {
+ChromeAppManager.define('delegate', [], function() {
 
-  "use strict";
+  'use strict';
 
   function match_(target, selector, boundElement){
     if (target === boundElement){
@@ -84,10 +110,10 @@ ChromeAppManager.define("delegate", [], function() {
  * A simple wrapper to handle xhr GET requests
  * usage: xhr(url).then(function() { .. }).catch(function() { .. })
  */
- 
-ChromeAppManager.define("xhr", [], function() {
 
-  "use strict";
+ChromeAppManager.define('xhr', ['isXML'], function(isXML) {
+
+  'use strict';
 
   return function xhr(url){
 
@@ -98,9 +124,12 @@ ChromeAppManager.define("xhr", [], function() {
       req.onreadystatechange = function(evt) {
         if (req.readyState==4) {
           if (req.status==200){
-            return res({ status: req.status, xml: req.responseXML });
+            if (req.responseXML && isXML(req.responseXML)){
+              return res({ status: req.status, xml: req.responseXML });
+            }
+            return rej({ status: 400, message: 'Invalid XML' });
           }
-          return rej(req.status);
+          return rej({ status: req.status, message: req.statusText});
         }
       };
 
@@ -123,9 +152,9 @@ ChromeAppManager.define("xhr", [], function() {
  * usage: loopProps({ a:1, b: 2}, function() { ... });
  */
 
-ChromeAppManager.define("loopProps", [], function() {
+ChromeAppManager.define('loopProps', [], function() {
 
-  "use strict";
+  'use strict';
 
   return function loopProps(targetObj, iterator, context){
     context = context || this;
@@ -143,9 +172,9 @@ ChromeAppManager.define("loopProps", [], function() {
  * usage: filter({ a:{ f: true }, b: { f: false } }, x => x.f)
  */
 
-ChromeAppManager.define("filterProps", ['loopProps'], function(loopProps) {
+ChromeAppManager.define('filterProps', ['loopProps'], function(loopProps) {
 
-  "use strict";
+  'use strict';
 
   return function filterProps(targetObj, predicate, context){
     var res = [];
@@ -164,9 +193,9 @@ ChromeAppManager.define("filterProps", ['loopProps'], function(loopProps) {
  * Evaluates xpath expression against the given XML document
  */
 
-ChromeAppManager.define("parser", [], function() {
+ChromeAppManager.define('parser', [], function() {
 
-  "use strict";
+  'use strict';
 
 
   function* resultGenerator(results){
@@ -231,7 +260,7 @@ ChromeAppManager.define("parser", [], function() {
   function normalize_(data){
 
     if (data.length == 0){
-      return "";
+      return '';
     }
 
     if (data.length == 1){
@@ -274,12 +303,12 @@ ChromeAppManager.define("parser", [], function() {
 
 });
 
-ChromeAppManager.define("Model", [], function() {
+ChromeAppManager.define('Model', [], function() {
 
-  "use strict";
+  'use strict';
 
   var id = -1;
-  var one_ = Symbol("one");
+  var one_ = Symbol('one');
 
   const modelStore = {};
 
@@ -332,7 +361,7 @@ ChromeAppManager.define("Model", [], function() {
   };
 
   Model.prototype.unwatch = function(key, fn){
-    if (typeof this.watchers[key] == "undefined" || this.watchers[key].length == 0){
+    if (typeof this.watchers[key] == 'undefined' || this.watchers[key].length == 0){
       return false;
     }
     if (fn == null){
@@ -363,7 +392,7 @@ ChromeAppManager.define("Model", [], function() {
 
 ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps, filterProps) {
 
-  "use strict";
+  'use strict';
 
   function ViewConfigError(msg) {
     this.name = 'ViewConfigError';

@@ -1,7 +1,7 @@
 
 var ChromeAppManager = (function() {
 
-  "use strict";
+  'use strict';
 
   var store_ = [];
 
@@ -27,17 +27,43 @@ var ChromeAppManager = (function() {
 
 
 /**
- * S
- * usage: ...
+ * A simple helper function to check if an object is an XML document
+ * usage: isXML(subject);
  */
- 
-ChromeAppManager.define("messanger", [], function() {
 
-  "use strict";
+ChromeAppManager.define('isXML', [], function() {
+
+  'use strict';
+
+  return function isXML(subject){
+    var documentElement = (subject ? subject.ownerDocument || subject : 0).documentElement;
+    return documentElement ? documentElement.nodeName !== 'HTML' : false;
+  };
+
+});
+
+/**
+ * Send a message with the result of the xpath evaluation
+ * to the logger.js script that was injected into the page.
+ */
+
+ChromeAppManager.define('messanger', ['isXML'], function(isXML) {
+
+  'use strict';
+
+  var serializer = new XMLSerializer();
 
   return function send(message, type){
     chrome.tabs.getSelected(null, function (tab) {
       chrome.tabs.executeScript(null, {file: './logger.js'}, function () {
+        if (type == 'xml'){
+          if (isXML(message)){
+            message = serializer.serializeToString(message);
+          }
+          else {
+            type = 'table';
+          }
+        }
         chrome.tabs.sendMessage(tab.id, JSON.stringify({ message, type }));
       });
     });
@@ -48,12 +74,12 @@ ChromeAppManager.define("messanger", [], function() {
 
 /**
  * A simple wrapper to handle event delegation
- * usage: el.addEventListener("click", delegate(".elem", function(evt) { ... });
+ * usage: el.addEventListener('click', delegate('.elem, function(evt) { ... });
  */
  
-ChromeAppManager.define("delegate", [], function() {
+ChromeAppManager.define('delegate', [], function() {
 
-  "use strict";
+  'use strict';
 
   function match_(target, selector, boundElement){
     if (target === boundElement){
@@ -84,10 +110,10 @@ ChromeAppManager.define("delegate", [], function() {
  * A simple wrapper to handle xhr GET requests
  * usage: xhr(url).then(function() { .. }).catch(function() { .. })
  */
- 
-ChromeAppManager.define("xhr", [], function() {
 
-  "use strict";
+ChromeAppManager.define('xhr', ['isXML'], function(isXML) {
+
+  'use strict';
 
   return function xhr(url){
 
@@ -98,9 +124,12 @@ ChromeAppManager.define("xhr", [], function() {
       req.onreadystatechange = function(evt) {
         if (req.readyState==4) {
           if (req.status==200){
-            return res({ status: req.status, xml: req.responseXML });
+            if (req.responseXML && isXML(req.responseXML)){
+              return res({ status: req.status, xml: req.responseXML });
+            }
+            return rej({ status: 400, message: 'Invalid XML' });
           }
-          return rej(req.status);
+          return rej({ status: req.status, message: req.statusText});
         }
       };
 
@@ -123,9 +152,9 @@ ChromeAppManager.define("xhr", [], function() {
  * usage: loopProps({ a:1, b: 2}, function() { ... });
  */
 
-ChromeAppManager.define("loopProps", [], function() {
+ChromeAppManager.define('loopProps', [], function() {
 
-  "use strict";
+  'use strict';
 
   return function loopProps(targetObj, iterator, context){
     context = context || this;
@@ -143,9 +172,9 @@ ChromeAppManager.define("loopProps", [], function() {
  * usage: filter({ a:{ f: true }, b: { f: false } }, x => x.f)
  */
 
-ChromeAppManager.define("filterProps", ['loopProps'], function(loopProps) {
+ChromeAppManager.define('filterProps', ['loopProps'], function(loopProps) {
 
-  "use strict";
+  'use strict';
 
   return function filterProps(targetObj, predicate, context){
     var res = [];
@@ -164,9 +193,9 @@ ChromeAppManager.define("filterProps", ['loopProps'], function(loopProps) {
  * Evaluates xpath expression against the given XML document
  */
 
-ChromeAppManager.define("parser", [], function() {
+ChromeAppManager.define('parser', [], function() {
 
-  "use strict";
+  'use strict';
 
 
   function* resultGenerator(results){
@@ -231,7 +260,7 @@ ChromeAppManager.define("parser", [], function() {
   function normalize_(data){
 
     if (data.length == 0){
-      return "";
+      return '';
     }
 
     if (data.length == 1){
@@ -274,12 +303,12 @@ ChromeAppManager.define("parser", [], function() {
 
 });
 
-ChromeAppManager.define("Model", [], function() {
+ChromeAppManager.define('Model', [], function() {
 
-  "use strict";
+  'use strict';
 
   var id = -1;
-  var one_ = Symbol("one");
+  var one_ = Symbol('one');
 
   const modelStore = {};
 
@@ -332,7 +361,7 @@ ChromeAppManager.define("Model", [], function() {
   };
 
   Model.prototype.unwatch = function(key, fn){
-    if (typeof this.watchers[key] == "undefined" || this.watchers[key].length == 0){
+    if (typeof this.watchers[key] == 'undefined' || this.watchers[key].length == 0){
       return false;
     }
     if (fn == null){
@@ -363,7 +392,7 @@ ChromeAppManager.define("Model", [], function() {
 
 ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps, filterProps) {
 
-  "use strict";
+  'use strict';
 
   function ViewConfigError(msg) {
     this.name = 'ViewConfigError';
@@ -556,11 +585,8 @@ window.onload = function () {
     const RIGHT_ARROW_KEYCODE = 39;
     const ENTER_KEYCODE = 13;
 
-    
 
     var $$ = document.querySelectorAll.bind(document);
-
-    
 
     // setup the app model
     // with model name 'xapp'
@@ -569,6 +595,13 @@ window.onload = function () {
 
     // register the views
 
+
+    /*
+     * xml-input
+     * from this view the user define the url to fetch in order
+     * to get an XML document, against which the xPath expressions
+     * will be evaluated.
+     */
     view.register('xml-input', {
       selector: '[data-tab="xml-input"]',
       next: 'xpath-analyzer',
@@ -577,6 +610,17 @@ window.onload = function () {
 
         return function() {
 
+          var urlField = $$('[data-url-field]')[0];
+          var latestSource = localStorage.getItem("latest-xml-source");
+
+          function toggleLoader(isLoading){
+            var box = view('xml-input').el;
+            if (isLoading){
+              return box.classList.add('is-loading');
+            }
+            return box.classList.remove('is-loading');
+          }
+
           function getXML(evt){
             if (evt.which != ENTER_KEYCODE){
               return;
@@ -584,25 +628,35 @@ window.onload = function () {
 
             evt.preventDefault();
 
-            // @todo handle loading
+            let errorBox = $$('[data-fetch-error]')[0];
+            errorBox.classList.add('hidden');
 
-            var url = this.value;
+            toggleLoader(true);
 
-            
-            let req = xhr(url);
-            req.then(function(res){
-            
+            view('xml-input').el.classList.add('is-loading');
+
+            let url = this.value && this.value.startsWith('http') ? this.value : 'http://' + this.value;
+
+            xhr(url).then(function(res){
+
+              // save in the local storage the latest successfully loaded xml
+              localStorage.setItem('latest-xml-source', url);
+
               // well, everything is fine, so just save in the model a reference
               // to the loaded xml, and select next tab
               model_.set('xml-loaded', true);
               model_.set('xml-source', url);
               model_.set('xml', res.xml);
               model_.set('tab', view('xml-input').next);
-            
+
+              toggleLoader();
+
             }).catch(function(err){
 
-              // @todo handle error
-              console.log("fail:",err);
+              errorBox.textContent = err.status == 404 ? 'The requested resource cannot be found.' : err.message;
+              errorBox.classList.remove('hidden');
+
+              toggleLoader();
 
             });
           }
@@ -611,20 +665,29 @@ window.onload = function () {
           // so that then the teardown method can retrieve a reference, and remove the listener
           view('xml-input').store('keyupFn', getXML);
 
-          $$('#url')[0].addEventListener('keyup', getXML, true);
+          urlField.addEventListener('keyup', getXML, true);
 
-          $$('#url')[0].focus();
+          if (latestSource){
+            urlField.value = latestSource;
+          }
+
+          urlField.focus();
 
         };
 
       }),
       teardown: function() {
         var fn = this.read('keyupFn');
-        $$('#url')[0].removeEventListener('keyup', fn, true);
+        $$('[data-url-field]')[0].removeEventListener('keyup', fn, true);
       }
     });
 
-    view.register('xpath-analyzer', { 
+
+    /*
+     * xpath-analyzer
+     * ...
+     */
+    view.register('xpath-analyzer', {
       selector: '[data-tab="xpath-analyzer"]',
       watches: [model_, {'xml-source': 'clearResult'}, {'?result': 'updateResult'}],
       prev: 'xml-input',
@@ -633,7 +696,9 @@ window.onload = function () {
         return model_.get('xml-loaded');
       },
       setup: require(['parser'], function(evaluate) {
+
         return function() {
+
           function evaluateXpath(evt){
             if (evt.which != ENTER_KEYCODE){
               return;
@@ -642,36 +707,41 @@ window.onload = function () {
             model_.set('latest-xpath', evt.currentTarget.value);
             model_.set('result', evaluate(model_.get('xml'), evt.currentTarget.value));
           }
+
           view('xpath-analyzer').store('keyupFn', evaluateXpath);
-          $$('#xpath')[0].addEventListener('keyup', evaluateXpath, true);
-          setTimeout(function() { $$('#xpath')[0].focus(); }, 250);
+          $$('[data-xpath-field]')[0].addEventListener('keyup', evaluateXpath, true);
+          setTimeout(function() { $$('[data-xpath-field]')[0].focus(); }, 250);
         };
 
       }),
       teardown: function() {
         var fn = view('xpath-analyzer').read('keyupFn');
-        $$('#xpath')[0].removeEventListener('keyup', fn, true);
+        $$('[data-xpath-field]')[0].removeEventListener('keyup', fn, true);
       },
       clearResult: function() {
-        $$('#result')[0].classList.add('hidden');
+        $$('[data-result]')[0].classList.add('hidden');
       },
       updateResult: require(['messanger'], function(log) {
 
         return function(prop, prevVal, currVal) {
-          var resultBox = $$('#result')[0];
+          var resultBox = $$('[data-result]')[0];
           var latestQuery = model_.get('latest-xpath');
+
+          var isPrimitiveResult = ['boolean', 'number', 'string'].indexOf(typeof(currVal)) >= 0;
 
 
           // @todo handle empty result
 
-          $$('[data-xpath]')[0].textContent = latestQuery;
-          $$('[data-result]')[0].textContent = ['boolean', 'number', 'string'].indexOf(typeof(currVal)) >= 0 ? currVal : 'Check Chrome Developer console.';
-          
+          $$('[data-result-query]')[0].textContent = latestQuery;
+          $$('[data-result-value]')[0].textContent = isPrimitiveResult ? currVal : 'Check Chrome Developer console.';
+
 
           // @todo improve logging
 
-          log('Result for: %c'+latestQuery, 'info');
-          log(currVal, 'xml');
+          if (!isPrimitiveResult){
+            log('Result for: %c'+latestQuery, 'info');
+            log(currVal, 'xml');
+          }
 
           resultBox.classList.remove('hidden');
         };
@@ -679,11 +749,10 @@ window.onload = function () {
       })
     });
 
-    view.register('credits', { 
+    view.register('credits', {
       selector: '[data-tab="credits"]',
       prev: 'xpath-analyzer'
     });
-    
 
 
     // when the selected tab changes
@@ -693,7 +762,11 @@ window.onload = function () {
     });
 
     function show(view){
-      $$('#slide-container')[0].className = 'view'+view.guid_;
+      // make the container slide on the right section
+      $$('[data-container]')[0].className = 'view'+view.guid_;
+      // ... and update the dots on the bottom
+      $$('[data-nav] .dot.selected')[0].classList.remove('selected');
+      $$(`[data-nav] [data-tab-btn=${view.name}]`)[0].classList.add('selected');
     }
 
 
@@ -703,15 +776,18 @@ window.onload = function () {
       if ([LEFT_ARROW_KEYCODE, RIGHT_ARROW_KEYCODE].indexOf(evt.which)<0){
         return;
       }
+      if (document.activeElement.tagName.toLowerCase() == 'input'){
+        return;
+      }
       evt.preventDefault();
       let viewName = evt.which == LEFT_ARROW_KEYCODE ? view(':selected').prev : view(':selected').next;
       if (viewName){
-        model_.set('tab', viewName);  
+        model_.set('tab', viewName);
       }
     });
 
 
-    $$('#nav')[0].addEventListener('click', delegate('.dot', function(evt) {  
+    $$('[data-nav]')[0].addEventListener('click', delegate('.dot', function(evt) {
       model_.set('tab', this.dataset.tabBtn);
     }));
 
