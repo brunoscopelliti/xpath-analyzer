@@ -7,36 +7,39 @@
 
   </head>
   <body>
-    
+
     <h1>xPath Analyzer</h1>
 
     <main class="mask">
-      <div id="slide-container">
+      <div id="slide-container" data-container>
         <section class="tab" data-tab="xml-input">
           <div class="loader">
             <span></span>
             <span></span>
           </div>
           <label for="url">The url of the XML resource</label>
-          <input type="url" name="url" id="url" autocapitalize="off" placeholder="Type the service's url, then press ENTER"/>
+          <input data-url-field type="url" name="url" id="url" autocapitalize="off" placeholder="Type the service's url, then press ENTER"/>
+          <p class="error small hidden" data-fetch-error></p>
         </section>
-        
+
         <section class="tab" data-tab="xpath-analyzer">
           <label for="xpath">The xPath you want to evaluate</label>
-          <input type="text" name="xpath" id="xpath" autocapitalize="off" placeholder="Type the xpath command, then press ENTER"/>
-          <div id="result">
-            <p>Result for: <b data-xpath></b></p>
-            <code data-result></code>
+          <input data-xpath-field type="text" name="xpath" id="xpath" autocapitalize="off" placeholder="Type the xpath command, then press ENTER"/>
+          <div class="result" data-result>
+            <h2>Result for: <b data-result-query></b></h2>
+            <code data-result-value></code>
           </div>
         </section>
 
         <section class="tab" data-tab="credits">
-          <p>@brunoscopelliti</p>
+          <h2><a href="https://chrome.google.com/webstore/detail/xpath-analyzer/abfcnmcmpfhkmhoapcplnafnecpofkci?utm_source=chrome-ntp-icon" target="_blank">xPath Analyzer v.2.0.0</a>, 01 December 2015</h2>
+          <p>by <a href="https://twitter.com/brunoscopelliti" target="_blank">Bruno Scopelliti</a></p>
+          <p class="final-note">Source code is publicly available on <a href="https://github.com/brunoscopelliti/xpath-analyzer" target="_blank">Github</a>, and is released under the MIT license.</p>
         </section>
       </div>
     </main>
 
-    <div id="nav" class="dots">
+    <div id="nav" class="dots" data-nav>
       <span class="dot selected" data-tab-btn="xml-input"><span></span></span>
       <span class="dot" data-tab-btn="xpath-analyzer"><span></span></span>
       <span class="dot" data-tab-btn="credits"><span></span></span>
