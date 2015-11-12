@@ -155,12 +155,12 @@ window.onload = function () {
 
           var isPrimitiveResult = ['boolean', 'number', 'string'].indexOf(typeof(currVal)) >= 0;
 
-
-          // @todo handle empty result
+          if (currVal == ''){
+            currVal = 'Ø';
+          }
 
           $$('[data-result-query]')[0].textContent = latestQuery;
           $$('[data-result-value]')[0].textContent = isPrimitiveResult ? currVal : 'Check Chrome Developer console.';
-
 
           // @todo improve logging
 

@@ -206,7 +206,7 @@ ChromeAppManager.define('parser', [], function() {
     } while(node);
   }
 
-  
+
   function consumeIterator_(it){
 
     var result = [];
@@ -268,10 +268,10 @@ ChromeAppManager.define('parser', [], function() {
       if (data[0].nodeType){
         return data[0];
       }
-    
+
       let props = Object.getOwnPropertyNames(data[0]);
       return props.length == 1 ? data[0][props[0]] : data[0];
-      
+
     }
 
     return data;
@@ -285,7 +285,7 @@ ChromeAppManager.define('parser', [], function() {
     var res =  xml.evaluate(xpath, xml,  null, XPathResult.ANY_TYPE, null);
 
     switch (res.resultType) {
-      
+
       case XPathResult.BOOLEAN_TYPE:
         return res.booleanValue;
 
@@ -302,6 +302,7 @@ ChromeAppManager.define('parser', [], function() {
   };
 
 });
+
 
 ChromeAppManager.define('Model', [], function() {
 
@@ -729,12 +730,12 @@ window.onload = function () {
 
           var isPrimitiveResult = ['boolean', 'number', 'string'].indexOf(typeof(currVal)) >= 0;
 
-
-          // @todo handle empty result
+          if (currVal == ''){
+            currVal = 'Ø';
+          }
 
           $$('[data-result-query]')[0].textContent = latestQuery;
           $$('[data-result-value]')[0].textContent = isPrimitiveResult ? currVal : 'Check Chrome Developer console.';
-
 
           // @todo improve logging
 
