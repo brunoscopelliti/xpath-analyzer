@@ -1,6 +1,6 @@
 {
   "name": "xpath-analyzer",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "Evaluate xPath/XSLT expressions against the XML of the current browser tab",
   "author": "Bruno Scopelliti",
   "homepage": "https://chrome.google.com/webstore/detail/xpath-analyzer/abfcnmcmpfhkmhoapcplnafnecpofkci",

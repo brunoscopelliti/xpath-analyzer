@@ -162,8 +162,6 @@ window.onload = function () {
           $$('[data-result-query]')[0].textContent = latestQuery;
           $$('[data-result-value]')[0].textContent = isPrimitiveResult ? currVal : 'Check Chrome Developer console.';
 
-          // @todo improve logging
-
           if (!isPrimitiveResult){
             log('Result for: %c'+latestQuery, 'info');
             log(currVal, 'xml');

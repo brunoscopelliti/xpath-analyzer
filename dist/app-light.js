@@ -401,7 +401,7 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
   }
 
   ViewConfigError.prototype = new Error();
-  
+
 
   const defaults_ = {
 
@@ -409,26 +409,26 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
     // duging the registration phase
     watches: [],
 
-    // the name of the previous view    
+    // the name of the previous view
     prev: null,
-    
+
     // the name of the next view
     next: null,
-    
+
     // define if the view can be accessed
     isEnabled: true,
 
     // define if the view is currently selected
     isSelected: false,
-  
-    // task which should be executed before 
+
+    // task which should be executed before
     // the view is displayed
     setup: function() {},
-    
-    // task which should be executed before 
+
+    // task which should be executed before
     // the view is hidden
     teardown: function() {}
-  
+
   };
 
   var base_ = Object.create(defaults_, {
@@ -477,9 +477,9 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
     if (name == ':selected'){
       return filterProps(views_, view => view.isSelected)[0];
     }
-    
+
     return views_[name];
-  
+
   }
 
   view.register = function register(name, config) {
@@ -506,7 +506,7 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
     // and apply the configuration
 
     views_[name] = Object.create(base_);
-    
+
     views_[name].name = name;
     views_[name].el = document.querySelector(config.selector);
     views_[name].guid_ = ++id;
@@ -516,7 +516,7 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
 
 
     // register watches.
-    // watches property is an array; first argument is the model, 
+    // watches property is an array; first argument is the model,
     // then all the others are objects with pais of property/handler.
 
     // if the property name starts with '?', the handler is fired only if
@@ -526,18 +526,15 @@ ChromeAppManager.define('view', ['loopProps', 'filterProps'], function(loopProps
     if (views_[name].watches.length > 0){
       let model = views_[name].watches.shift();
       views_[name].watches.forEach(function(obj){
-    
+
         var prop = Object.keys(obj)[0];
         var watcherName = obj[prop];
 
         var fn, handler = typeof watcherName == 'function' ? watcherName : this[watcherName];
-        
+
         if (prop.startsWith('?')){
           prop = prop.replace('?', '');
-
-          // @todo when rest parameters will be supported in Chrome, 
-          // this should be refactored using an arrow function
-          fn = function() { this.isSelected && handler.apply(this, arguments); }.bind(this);
+          fn = (...args) => this.isSelected && handler.apply(this, args);
         }
         else{
           fn = handler.bind(this);
