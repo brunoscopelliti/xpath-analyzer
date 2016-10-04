@@ -66,7 +66,7 @@ tape('require with context', function(t) {
 
 tape('module model.js:', function(t) { t.end(); });
 
-tape('interface', function(t) { 
+tape('interface', function(t) {
 
   ChromeAppManager.require(['Model'], function(Model) {
     t.equal(typeof Model, 'function', 'model is a constructor function');
@@ -82,7 +82,7 @@ tape('interface', function(t) {
 
 });
 
-tape('create/destroy new model', function(t) { 
+tape('create/destroy new model', function(t) {
 
   ChromeAppManager.require(['Model'], function(Model) {
     var appModel = new Model('test', { val: 42 });
@@ -97,7 +97,7 @@ tape('create/destroy new model', function(t) {
 
 });
 
-tape('get created model', function(t) { 
+tape('get created model', function(t) {
 
   ChromeAppManager.require(['Model'], function(Model) {
     var appModel = new Model('test', { val: 42 });
@@ -114,7 +114,7 @@ tape('get created model', function(t) {
 
 });
 
-tape('get created model when more there are more different models', function(t) { 
+tape('get created model when more there are more different models', function(t) {
 
   ChromeAppManager.require(['Model'], function(Model) {
     var appModel = new Model('app', { enabled: true });
@@ -124,10 +124,10 @@ tape('get created model when more there are more different models', function(t) 
   ChromeAppManager.require(['Model'], function(Model) {
     var appModel = new Model('app');
     var siteModel = new Model('site');
-    
+
     t.equal(appModel.get('enabled'), true, 'the correct model is retrived');
     t.equal(siteModel.get('val'), 42, 'the correct model is retrived');
-    
+
     appModel.destroy();
     siteModel.destroy();
   });
@@ -136,7 +136,7 @@ tape('get created model when more there are more different models', function(t) 
 
 });
 
-tape('set model properties', function(t) { 
+tape('set model properties', function(t) {
 
   ChromeAppManager.require(['Model'], function(Model) {
     var appModel = new Model('test', { val: 42 });
@@ -154,7 +154,7 @@ tape('set model properties', function(t) {
 
 });
 
-tape('watch model property', function(t) { 
+tape('watch model property', function(t) {
 
   ChromeAppManager.require(['Model'], function(Model) {
     var spy = sinon.spy();
@@ -164,7 +164,7 @@ tape('watch model property', function(t) {
     appModel.set('val', 1);
 
     t.ok(spy.calledOnce, 'watch set an handler that is executed when the watched property changes');
-    
+
     var call = spy.getCall(0);
     t.equal(call.args[0], 'val', 'first argument is the property name');
     t.equal(call.args[1], 42, 'second argument is the property initial value');
@@ -178,7 +178,7 @@ tape('watch model property', function(t) {
 
 });
 
-tape('watch model property, undo', function(t) { 
+tape('watch model property, undo', function(t) {
 
   ChromeAppManager.require(['Model'], function(Model) {
     var spy = sinon.spy();
@@ -198,7 +198,7 @@ tape('watch model property, undo', function(t) {
 
 });
 
-tape('unwatch model property', function(t) { 
+tape('unwatch model property', function(t) {
 
   ChromeAppManager.require(['Model'], function(Model) {
     var spy = sinon.spy();
@@ -208,7 +208,7 @@ tape('unwatch model property', function(t) {
     appModel.set('val', 1);
 
     t.ok(spy.calledOnce, 'watch set an handler that is executed when the watched property changes');
-    
+
     spy.reset();
 
     var res = appModel.unwatch('val', spy);
@@ -226,7 +226,7 @@ tape('unwatch model property', function(t) {
 
     appModel.watch('enabled', spy1);
     appModel.watch('enabled', spy2);
-    
+
     var res = appModel.unwatch('enabled');
     appModel.set('enabled', false);
 
@@ -239,7 +239,7 @@ tape('unwatch model property', function(t) {
 
 });
 
-tape('watchOne model property', function(t) { 
+tape('watchOne model property', function(t) {
 
   ChromeAppManager.require(['Model'], function(Model) {
     var spy = sinon.spy();
@@ -265,7 +265,7 @@ tape('watchOne model property', function(t) {
 
 tape('module app-view.js:', function(t) { t.end(); });
 
-tape('interface', function(t) { 
+tape('interface', function(t) {
 
   ChromeAppManager.require(['view'], function(view) {
     t.equal(typeof view, 'function', 'view is a function');
@@ -277,16 +277,16 @@ tape('interface', function(t) {
 
 });
 
-tape('register a new view', function(t) { 
+tape('register a new view', function(t) {
 
   ChromeAppManager.require(['view'], function(view) {
 
     setup_('<div id="main">Hello world!</div>');
 
     var fakeModel = { val: 42 };
-    
-    var homeView = view.register('home', { 
-      selector: '#main', 
+
+    var homeView = view.register('home', {
+      selector: '#main',
       get isEnabled() {
         return fakeModel.val === 42;
       }
@@ -315,7 +315,7 @@ tape('register a new view', function(t) {
 
 });
 
-tape('register a new view with watcher', function(t) { 
+tape('register a new view with watcher', function(t) {
 
   ChromeAppManager.require(['Model', 'view'], function(Model, view) {
 
@@ -323,9 +323,9 @@ tape('register a new view with watcher', function(t) {
 
     var model_ = new Model('xapp', { val: 42 });
     var spy = sinon.spy();
-    
-    var homeView = view.register('home', { 
-      selector: '#main', 
+
+    var homeView = view.register('home', {
+      selector: '#main',
       isSelected: false,
       watches: [model_, {val: 'handler'}],
       handler: spy
@@ -353,7 +353,7 @@ tape('register a new view with watcher', function(t) {
 
 });
 
-tape('register a new view with conditional watcher', function(t) { 
+tape('register a new view with conditional watcher', function(t) {
 
   ChromeAppManager.require(['Model', 'view'], function(Model, view) {
 
@@ -361,9 +361,9 @@ tape('register a new view with conditional watcher', function(t) {
 
     var model_ = new Model('xapp', { val: 42 });
     var spy = sinon.spy();
-    
-    var homeView = view.register('home', { 
-      selector: '#main', 
+
+    var homeView = view.register('home', {
+      selector: '#main',
       isSelected: false,
       watches: [model_, {'?val': 'handler'}],
       handler: spy
@@ -389,7 +389,7 @@ tape('register a new view with conditional watcher', function(t) {
 
     model_.destroy();
     view.reset();
-    
+
   });
 
   teardown_();
@@ -398,7 +398,7 @@ tape('register a new view with conditional watcher', function(t) {
 
 });
 
-tape('register a new view with function watcher', function(t) { 
+tape('register a new view with function watcher', function(t) {
 
   ChromeAppManager.require(['Model', 'view'], function(Model, view) {
 
@@ -406,9 +406,9 @@ tape('register a new view with function watcher', function(t) {
 
     var model_ = new Model('xapp', { val: 42 });
     var spy = sinon.spy();
-    
-    var homeView = view.register('home', { 
-      selector: '#main', 
+
+    var homeView = view.register('home', {
+      selector: '#main',
       isSelected: false,
       watches: [model_, {val: spy}]
     });
@@ -435,17 +435,17 @@ tape('register a new view with function watcher', function(t) {
 
 });
 
-tape('store/read private view data', function(t) { 
+tape('store/read private view data', function(t) {
 
   ChromeAppManager.require(['view'], function(view) {
 
     setup_('<div id="main">Hello world!</div>');
 
-    var homeView = view.register('home', { 
+    var homeView = view.register('home', {
       selector: '#main'
     });
 
-    var otherView = view.register('other', { 
+    var otherView = view.register('other', {
       selector: '#other'
     });
 
@@ -463,7 +463,7 @@ tape('store/read private view data', function(t) {
 
 });
 
-tape('register a view throw a ViewConfigError', function(t) { 
+tape('register a view throw a ViewConfigError', function(t) {
 
   ChromeAppManager.require(['view'], function(view) {
     var badFn = view.register.bind(view, 'home');
@@ -474,7 +474,7 @@ tape('register a view throw a ViewConfigError', function(t) {
 
 });
 
-tape('select enabled view', function(t) { 
+tape('select enabled view', function(t) {
 
   ChromeAppManager.require(['view'], function(view) {
 
@@ -504,7 +504,7 @@ tape('select enabled view', function(t) {
 
 });
 
-tape('select not enabled view', function(t) { 
+tape('select not enabled view', function(t) {
 
   ChromeAppManager.require(['view'], function(view) {
 
@@ -534,7 +534,7 @@ tape('select not enabled view', function(t) {
 
 });
 
-tape('view(:selected) returns the selected view', function(t) { 
+tape('view(:selected) returns the selected view', function(t) {
 
   ChromeAppManager.require(['view'], function(view) {
 
@@ -543,7 +543,7 @@ tape('view(:selected) returns the selected view', function(t) {
     var home = view('home');
     var login = view('login');
     var cart = view('cart');
-    var selectedView = view(':selected');    
+    var selectedView = view(':selected');
 
     t.equal(selectedView, home, ':selected returns the selected view');
 
@@ -600,7 +600,7 @@ function setupView_(){
 
 tape('module delegate.js:', function(t) { t.end(); });
 
-tape('interface', function(t) { 
+tape('interface', function(t) {
 
   ChromeAppManager.require(['delegate'], function(delegate) {
     t.equal(typeof delegate, 'function', 'delegate is a function');
@@ -610,10 +610,10 @@ tape('interface', function(t) {
 
 });
 
-tape('delegate (target == delegator)', function(t) { 
+tape('delegate (target == delegator)', function(t) {
 
   ChromeAppManager.require(['delegate'], function(delegate) {
-    
+
     setup_('<div id="box"><button id="btn">Click here</button></div>');
 
     var spy = sinon.spy();
@@ -632,10 +632,10 @@ tape('delegate (target == delegator)', function(t) {
 
 });
 
-tape('delegate (target is inside delegator)', function(t) { 
+tape('delegate (target is inside delegator)', function(t) {
 
   ChromeAppManager.require(['delegate'], function(delegate) {
-    
+
     setup_('<div id="box"><button id="btn"><span id="text">Click here</span></button></div>');
 
     var spy = sinon.spy();
@@ -661,7 +661,7 @@ tape('delegate (target is inside delegator)', function(t) {
 
 tape('module loop-props.js:', function(t) { t.end(); });
 
-tape('interface', function(t) { 
+tape('interface', function(t) {
 
   ChromeAppManager.require(['loopProps'], function(loopProps) {
     t.equal(typeof loopProps, 'function', 'loopProps is a function');
@@ -671,7 +671,7 @@ tape('interface', function(t) {
 
 });
 
-tape('simple loop', function(t) { 
+tape('simple loop', function(t) {
 
   ChromeAppManager.require(['loopProps'], function(loopProps) {
 
@@ -702,7 +702,7 @@ tape('simple loop', function(t) {
 
 });
 
-tape('loop with bound context', function(t) { 
+tape('loop with bound context', function(t) {
 
   ChromeAppManager.require(['loopProps'], function(loopProps) {
 
@@ -728,7 +728,7 @@ tape('loop with bound context', function(t) {
 
 tape('module filter-objects.js:', function(t) { t.end(); });
 
-tape('interface', function(t) { 
+tape('interface', function(t) {
 
   ChromeAppManager.require(['filterProps'], function(filterProps) {
     t.equal(typeof filterProps, 'function', 'filterProps is a function');
@@ -738,7 +738,7 @@ tape('interface', function(t) {
 
 });
 
-tape('filter object', function(t) { 
+tape('filter object', function(t) {
 
   ChromeAppManager.require(['filterProps'], function(filterProps) {
 
@@ -767,7 +767,7 @@ tape('filter object', function(t) {
 
 });
 
-tape('filter object when no match returns empty array', function(t) { 
+tape('filter object when no match returns empty array', function(t) {
 
   ChromeAppManager.require(['filterProps'], function(filterProps) {
 
@@ -787,15 +787,15 @@ tape('filter object when no match returns empty array', function(t) {
 
 });
 
-tape('filter with bound context', function(t) { 
+tape('filter with bound context', function(t) {
 
   ChromeAppManager.require(['filterProps'], function(filterProps) {
 
     var obj = { a: { qty: 3, id: 1 }, b: { qty: 12, id: 2 } }
     var context = { limit: 10 };
 
-    var spy = sinon.spy(function(obj, k, original) { 
-      return obj.qty <= this.limit; 
+    var spy = sinon.spy(function(obj, k, original) {
+      return obj.qty <= this.limit;
     });
 
     var res = filterProps(obj, spy, context);
@@ -817,7 +817,7 @@ tape('filter with bound context', function(t) {
 
 tape('module is-xml.js:', function(t) { t.end(); });
 
-tape('interface', function(t) { 
+tape('interface', function(t) {
 
   ChromeAppManager.require(['isXML'], function(isXML) {
     t.equal(typeof isXML, 'function', 'isXML is a function');
@@ -827,10 +827,10 @@ tape('interface', function(t) {
 
 });
 
-tape('isXML return true for xml docs', function(t) { 
+tape('isXML return true for xml docs', function(t) {
 
   ChromeAppManager.require(['isXML'], function(isXML) {
-  
+
     t.equal(isXML(true), false, 'boolean');
     t.equal(isXML(42), false, 'number');
     t.equal(isXML("a"), false, 'string');
@@ -850,7 +850,7 @@ tape('isXML return true for xml docs', function(t) {
 
 tape('module xpath-parser.js:', function(t) { t.end(); });
 
-tape('interface', function(t) { 
+tape('interface', function(t) {
 
   ChromeAppManager.require(['parser'], function(parser) {
     t.equal(typeof parser, 'function', 'parser is a function');
@@ -860,10 +860,10 @@ tape('interface', function(t) {
 
 });
 
-tape('evaluate count & math', function(t) { 
+tape('evaluate count & math', function(t) {
 
   ChromeAppManager.require(['parser'], function(parser) {
-    
+
     var xml = setupXML_();
 
     t.equal(parser(xml, "6*7"), 42);
@@ -877,7 +877,7 @@ tape('evaluate count & math', function(t) {
     t.equal(parser(xml, "count(//root[@version='1.0']/app)"), 0);
     t.equal(parser(xml, "count(//dep)"), 3);
     t.equal(parser(xml, "count(//root[@name='package.xml' and contains(//author/name, 'Bruno')])"), 1);
-    t.equal(parser(xml, "count(//root[contains(//author/name, 'Batman')])"), 0);  
+    t.equal(parser(xml, "count(//root[contains(//author/name, 'Batman')])"), 0);
 
   });
 
@@ -885,10 +885,10 @@ tape('evaluate count & math', function(t) {
 
 });
 
-tape('evaluate bool', function(t) { 
+tape('evaluate bool', function(t) {
 
   ChromeAppManager.require(['parser'], function(parser) {
-    
+
     var xml = setupXML_();
 
     t.equal(parser(xml, "count(//dep) > 2"), true);
@@ -900,17 +900,17 @@ tape('evaluate bool', function(t) {
 
 });
 
-tape('evaluate text', function(t) { 
+tape('evaluate text', function(t) {
 
   ChromeAppManager.require(['parser'], function(parser) {
-    
+
     var xml = setupXML_();
 
     t.equal(parser(xml, "//root/app/text()"), 'xpath-analyzer');
     t.equal(parser(xml, "//authors/parent::*/@name"), 'package.xml');
 
     t.equal(parser(xml, "//key[2]/text()"), 'xml');
-    
+
     t.equal(parser(xml, "//dep[1]/text()"), '');
     t.equal(parser(xml, "//dep[@name='sinon']/@version"), '1.16.1');
     t.equal(parser(xml, "//dep[starts-with(@name,'sin')]/@version"), '1.16.1');
@@ -925,10 +925,10 @@ tape('evaluate text', function(t) {
 
 });
 
-tape('evaluate nodes', function(t) { 
+tape('evaluate nodes', function(t) {
 
   ChromeAppManager.require(['parser'], function(parser) {
-    
+
     var xml = setupXML_();
 
     t.equal(parser(xml, "//authors").nodeType, Element.ELEMENT_NODE);

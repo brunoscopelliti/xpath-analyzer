@@ -9,7 +9,7 @@ ChromeAppManager.define('Model', [], function() {
   const modelStore = {};
 
   function Model(key, initialValues){
-    
+
     if (key && modelStore[key]) {
       return modelStore[key];
     }
@@ -17,13 +17,13 @@ ChromeAppManager.define('Model', [], function() {
     this.guid_ = key || '_anon_' + ++id;
     this.dataStore = new Map();
     this.watchers = {};
-    
+
     for (let k in initialValues){
       if (initialValues.hasOwnProperty(k)){
         this.dataStore.set(k, initialValues[k]);
       }
     }
-    
+
     modelStore[key] = this;
   }
 
@@ -41,9 +41,6 @@ ChromeAppManager.define('Model', [], function() {
       this.watchers[key].forEach(function(watchFn) {
         if (!cancelled){
           watchFn.call(this, key, currentValue, value, undo);
-          if (watchFn[one_]){
-            this.unwatch(key, watchFn);
-          }
         }
       }, this);
     }
