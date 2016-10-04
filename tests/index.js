@@ -245,11 +245,18 @@ tape('watchOne model property', function(t) {
     var spy = sinon.spy();
     var appModel = new Model('test', { val: 42 });
 
-    appModel.watchOne('val', spy);
-    appModel.set('val', 1);
-    appModel.set('val', 2);
+    appModel.watchOne('fluffy', spy);
+
+    appModel.set('fluffy', 1);
+    appModel.set('fluffy', 2);
 
     t.ok(spy.calledOnce, 'watchOne set an handler that is executed only one time');
+
+    const call = spy.getCall(0);
+    t.equal(call.args[0], 'fluffy', 'first argument is the property name');
+    t.equal(call.args[1], undefined, 'second argument is the property initial value');
+    t.equal(call.args[2], 1, 'third argument is the property new value');
+    t.equal(typeof(call.args[3]), 'function', 'fourth argument is a function that allows to revert the action');
 
     appModel.destroy();
   });
@@ -257,6 +264,38 @@ tape('watchOne model property', function(t) {
   t.end();
 
 });
+
+tape('watch/watchOne model property', function(t) {
+
+  ChromeAppManager.require(['Model'], function(Model) {
+    var spy = sinon.spy();
+    var appModel = new Model('test', { val: 42 });
+
+    appModel.watch('foo', spy);
+    appModel.watchOne('bar', spy);
+
+    appModel.set('foo', 1);
+    t.ok(spy.calledOnce, 'watcher is executed');
+
+    spy.reset();
+
+    appModel.set('bar', 1);
+    appModel.set('bar', 2);
+    t.ok(spy.calledOnce, 'watchOne set an handler that is executed only one time');
+
+    spy.reset();
+
+    appModel.set('foo', 10);
+    t.ok(spy.calledOnce, 'watcher is not removed');
+
+    appModel.destroy();
+  });
+
+  t.end();
+
+});
+
+
 
 
 /**
