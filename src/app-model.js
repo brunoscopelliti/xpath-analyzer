@@ -46,11 +46,19 @@ ChromeAppManager.define('Model', [], function() {
     }
   };
 
-  Model.prototype.watch = function(key, fn){
+  Model.prototype.watch = function(key, fn, opts){
+
     if (!this.watchers[key]){
       this.watchers[key] = [];
     }
-    this.watchers[key].push(fn);
+
+    const oneshotFn = (...args) => {
+      this.unwatch(key, oneshotFn);
+      fn.apply(null, args);
+    }
+
+    const handler = opts && opts[one_] ? oneshotFn : fn;
+    this.watchers[key].push(handler);
   };
 
   Model.prototype.unwatch = function(key, fn){
@@ -69,8 +77,7 @@ ChromeAppManager.define('Model', [], function() {
   };
 
   Model.prototype.watchOne = function(key, fn){
-    fn[one_] = true;
-    this.watch(key, fn);
+    this.watch(key, fn, { [one_]: true });
   };
 
   Model.prototype.destroy = function() {

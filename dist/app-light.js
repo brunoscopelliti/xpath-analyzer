@@ -314,7 +314,7 @@ ChromeAppManager.define('Model', [], function() {
   const modelStore = {};
 
   function Model(key, initialValues){
-    
+
     if (key && modelStore[key]) {
       return modelStore[key];
     }
@@ -322,13 +322,13 @@ ChromeAppManager.define('Model', [], function() {
     this.guid_ = key || '_anon_' + ++id;
     this.dataStore = new Map();
     this.watchers = {};
-    
+
     for (let k in initialValues){
       if (initialValues.hasOwnProperty(k)){
         this.dataStore.set(k, initialValues[k]);
       }
     }
-    
+
     modelStore[key] = this;
   }
 
@@ -346,19 +346,24 @@ ChromeAppManager.define('Model', [], function() {
       this.watchers[key].forEach(function(watchFn) {
         if (!cancelled){
           watchFn.call(this, key, currentValue, value, undo);
-          if (watchFn[one_]){
-            this.unwatch(key, watchFn);
-          }
         }
       }, this);
     }
   };
 
-  Model.prototype.watch = function(key, fn){
+  Model.prototype.watch = function(key, fn, opts){
+
     if (!this.watchers[key]){
       this.watchers[key] = [];
     }
-    this.watchers[key].push(fn);
+
+    const oneshotFn = (...args) => {
+      this.unwatch(key, oneshotFn);
+      fn.apply(null, args);
+    }
+
+    const handler = opts && opts[one_] ? oneshotFn : fn;
+    this.watchers[key].push(handler);
   };
 
   Model.prototype.unwatch = function(key, fn){
@@ -377,8 +382,7 @@ ChromeAppManager.define('Model', [], function() {
   };
 
   Model.prototype.watchOne = function(key, fn){
-    fn[one_] = true;
-    this.watch(key, fn);
+    this.watch(key, fn, { [one_]: true });
   };
 
   Model.prototype.destroy = function() {
