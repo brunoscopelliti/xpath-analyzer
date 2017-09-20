@@ -1,6 +1,6 @@
 # xpath-analyzer
 
-Google Chrome extension that allows to evaluate xPath expressions against the XML available at a given URL. Direct link to the [Google Chrome store] [1].
+Google Chrome extension that allows to evaluate xPath expressions against the XML available at a given URL. Direct link to the [Google Chrome store][1].
 
 ## xPath Analyzer in a nutshell
 Google Chrome extension that allows to evaluate xPath expressions against the XML available at a given URL.
@@ -44,4 +44,3 @@ xPath Analyzer can evaluate each possible type of xPath (or XSLT expression).
 
 
 [1]: https://chrome.google.com/webstore/detail/xpath-analyzer/abfcnmcmpfhkmhoapcplnafnecpofkci?utm_source=chrome-ntp-icon
-[2]: http://bit.ly/Rink5Y
